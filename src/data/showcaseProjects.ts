@@ -2,6 +2,42 @@ import type { Project } from '../types/project';
 
 export const SHOWCASE_PROJECTS: Project[] = [
   {
+    "id": "proj-win-camp-summer",
+    "slug": "win-camp-summer",
+    "title": "WIN CAMP — פעילות הקיץ (Google Veo & Kling)",
+    "subtitle": "WIN CAMP / AmitAI",
+    "client": "WIN CAMP",
+    "year": "2026",
+    "category": "Commercial",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 1,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי, קריאייטיב והפקת סרט AI מלאה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/facebook-reel-1048200180189310.mp4",
+      "previewUrl": "/videos/facebook-reel-1048200180189310.mp4",
+      "posterUrl": "/thumbnails/facebook-reel-1048200180189310.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:06"
+    },
+    "challenge": "",
+    "idea": "שילוב Google Veo לפריים הראשון, ChatGPT לשמירה על עקביות דמויות, אנימציה ב-Kling ומוזיקה מקורית ב-Suno.",
+    "shortDescription": "הפקת סרטון קולנועי מרהיב לפעילות הקיץ WIN CAMP — שילוב של Google Veo, Kling AI ו-Suno.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": ["Google Veo", "Kling AI", "ChatGPT", "Suno"],
+    "gallery": [],
+    "createdAt": new Date().toISOString(),
+    "updatedAt": new Date().toISOString()
+  },
+  {
     "id": "proj-cbc-venue",
     "slug": "cbc-venue",
     "title": "CBC — Grand Venue & Luxury Red Carpet",
