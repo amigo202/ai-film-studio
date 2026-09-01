@@ -23,6 +23,18 @@ const SHOWCASE_PAGES = [
     image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80'
   },
   {
+    path: 'work/shomer-al-atzmi',
+    title: 'שומר על עצמי בקש״ר — כיתות ח׳ | AmitAI Film Studio',
+    description: 'סרטון מודעות בנושא בטיחות ברשת — הפקה ייעודית מלאה.',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    path: 'work/nativ-final',
+    title: 'סרטון נתיב | AmitAI Film Studio',
+    description: 'הפקה קולנועית לפרויקט נתיב בטכנולוגיית AI מתקדמת.',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
     path: 'work/cbc-ramadan',
     title: 'CBC — Ramadan Campaign | AI Commercial Film',
     description: 'סרט פרסומת מלא ב-AI עבור CBC — מסע קולנועי ברכבת לילה מדברית, 18 שוטים, 0 ימי צילום.',
