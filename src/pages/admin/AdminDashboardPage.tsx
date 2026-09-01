@@ -10,19 +10,30 @@ import {
   LogOut,
   Upload,
   CheckCircle2,
-  Play
+  Play,
+  Edit2,
+  X,
+  Save
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const { projects, createProject, deleteProject } = useProjects();
+  const { projects, createProject, updateProject, deleteProject } = useProjects();
   const navigate = useNavigate();
 
-  // Simple 2-field state
+  // Simple 2-field add state
   const [videoTitle, setVideoTitle] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Edit modal state
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editVideoUrl, setEditVideoUrl] = useState('');
+  const [editPosterUrl, setEditPosterUrl] = useState('');
+  const [editDuration, setEditDuration] = useState('');
+  const [editSaving, setEditSaving] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/admin" replace />;
@@ -117,6 +128,50 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const openEditModal = (project: Project) => {
+    setEditingProject(project);
+    setEditTitle(project.title);
+    setEditVideoUrl(
+      project.video.provider === 'vimeo' && project.video.videoId
+        ? `https://vimeo.com/${project.video.videoId}`
+        : project.video.masterUrl || project.video.previewUrl || ''
+    );
+    setEditPosterUrl(project.video.posterUrl || '');
+    setEditDuration(project.video.duration || '');
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProject || !editTitle.trim()) return;
+
+    setEditSaving(true);
+    try {
+      const parsed = parseVideo(editVideoUrl);
+      const updatedVideo = {
+        ...editingProject.video,
+        provider: parsed.provider,
+        videoId: parsed.videoId,
+        masterUrl: parsed.masterUrl,
+        posterUrl: editPosterUrl.trim() || editingProject.video.posterUrl,
+        duration: editDuration.trim() || editingProject.video.duration
+      };
+
+      await updateProject(editingProject.id, {
+        title: editTitle.trim(),
+        shortDescription: editTitle.trim(),
+        video: updatedVideo
+      });
+
+      setSuccessMessage(`הסרטון "${editTitle}" עודכן בהצלחה!`);
+      setEditingProject(null);
+      setTimeout(() => setSuccessMessage(''), 4000);
+    } catch (err) {
+      console.error('Failed to update project:', err);
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   const handleDelete = async (id: string, title: string) => {
     if (window.confirm(`האם למחוק את הסרטון "${title}"?`)) {
       await deleteProject(id);
@@ -130,7 +185,7 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-syne font-bold text-white text-lg uppercase tracking-wider">
-              AmitAI · העלאת סרטונים
+              AmitAI · ניהול ועריכת סרטונים
             </span>
             <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
               ({user?.email})
@@ -175,7 +230,7 @@ export const AdminDashboardPage: React.FC = () => {
                 העלאת סרטון חדש לאתר
               </h2>
               <p className="text-xs text-zinc-400 font-hebrew">
-                רק כותבים שם, מדביקים קישור (Vimeo / YouTube) — והסרטון באוויר מיד.
+                רק כותבים שם, מדביקים קישור (Vimeo / YouTube / קישור ישיר) — והסרטון באוויר מיד.
               </p>
             </div>
           </div>
@@ -206,7 +261,7 @@ export const AdminDashboardPage: React.FC = () => {
             {/* 2. Video Link */}
             <div>
               <label className="block text-xs font-mono uppercase tracking-wider text-amber-300 font-bold mb-2">
-                2. קישור לסרטון (Vimeo / YouTube / קישור ישיר) *
+                2. קישור לסרטון (VIMEO / YOUTUBE / קישור ישיר) *
               </label>
               <input
                 type="text"
@@ -237,7 +292,7 @@ export const AdminDashboardPage: React.FC = () => {
               סה"כ {projects.length} סרטונים
             </span>
             <h3 className="font-syne text-lg font-bold uppercase text-white">
-              הסרטונים שמוצגים באתר
+              הסרטונים שמוצגים באתר (עריכה / מחיקה)
             </h3>
           </div>
 
@@ -247,7 +302,7 @@ export const AdminDashboardPage: React.FC = () => {
                 key={project.id}
                 className="bg-[#121216] border border-white/10 rounded-xl p-4 md:p-5 flex items-center justify-between gap-4 hover:border-white/20 transition-all"
               >
-                {/* Delete / View Actions */}
+                {/* Actions: Edit, View, Delete */}
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDelete(project.id, project.title)}
@@ -255,6 +310,14 @@ export const AdminDashboardPage: React.FC = () => {
                     title="מחק סרטון"
                   >
                     <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => openEditModal(project)}
+                    className="p-2.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:text-amber-300 border border-amber-500/30 transition-colors"
+                    title="ערוך סרטון"
+                  >
+                    <Edit2 className="w-4 h-4" />
                   </button>
 
                   <Link
@@ -298,6 +361,114 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* EDIT VIDEO MODAL */}
+      {editingProject && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 animate-fade-in">
+          <div className="w-full max-w-lg bg-[#121216] border-2 border-amber-500/40 rounded-2xl p-6 md:p-8 shadow-2xl relative text-right">
+            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-400 text-black flex items-center justify-center">
+                  <Edit2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-syne text-lg font-bold uppercase text-white">
+                    עריכת סרטון
+                  </h3>
+                  <span className="text-[11px] font-mono text-zinc-400">
+                    שינוי שם, קישור וידאו או פוסטר
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingProject(null)}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-amber-300 font-bold mb-1.5">
+                  שם הסרטון *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Video URL */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-amber-300 font-bold mb-1.5">
+                  קישור לסרטון (Vimeo / YouTube / קישור ישיר) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editVideoUrl}
+                  onChange={(e) => setEditVideoUrl(e.target.value)}
+                  placeholder="https://vimeo.com/... או /videos/..."
+                  className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Poster URL */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-400 mb-1.5">
+                  תמונת פוסטר (Image URL - אופציונלי)
+                </label>
+                <input
+                  type="text"
+                  value={editPosterUrl}
+                  onChange={(e) => setEditPosterUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Duration */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-400 mb-1.5">
+                  אורך הסרטון (למשל 03:13 - אופציונלי)
+                </label>
+                <input
+                  type="text"
+                  value={editDuration}
+                  onChange={(e) => setEditDuration(e.target.value)}
+                  placeholder="03:13"
+                  className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setEditingProject(null)}
+                  className="px-4 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 text-xs font-mono uppercase"
+                >
+                  ביטול
+                </button>
+                <button
+                  type="submit"
+                  disabled={editSaving || !editTitle.trim()}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase text-xs transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{editSaving ? 'שומר...' : 'שמור שינויים'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
