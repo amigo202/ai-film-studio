@@ -17,6 +17,12 @@ const template = fs.readFileSync(templatePath, 'utf-8');
 
 const SHOWCASE_PAGES = [
   {
+    path: 'work/cyber-justice',
+    title: 'אגף הסייבר — משרד המשפטים | AmitAI Film Studio',
+    description: 'סרט סיכול סייבר ומבצעים מיוחדים עבור אגף הסייבר של משרד המשפטים — הפקה קולנועית מלאה ב-AI.',
+    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
     path: 'work/cbc-ramadan',
     title: 'CBC — Ramadan Campaign | AI Commercial Film',
     description: 'סרט פרסומת מלא ב-AI עבור CBC — מסע קולנועי ברכבת לילה מדברית, 18 שוטים, 0 ימי צילום.',

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useProjects } from '../context/ProjectContext';
 import type { ProjectCategory, WorkType } from '../types/project';
 import { VideoPreviewCard } from '../components/video/VideoPreviewCard';
+import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
-import { Film, LayoutGrid, List } from 'lucide-react';
+import { Film, LayoutGrid, List, PlaySquare } from 'lucide-react';
 
 const CATEGORIES: { label: string; value: 'All' | ProjectCategory }[] = [
   { label: 'הכל', value: 'All' },
@@ -13,14 +14,13 @@ const CATEGORIES: { label: string; value: 'All' | ProjectCategory }[] = [
   { label: 'Social', value: 'Social' },
   { label: 'Education', value: 'Education' },
   { label: 'Experimental', value: 'Experimental' },
-  { label: 'Digital Humans', value: 'Digital Humans' },
 ];
 
 export const WorkPage: React.FC = () => {
   const { projects } = useProjects();
   const [selectedCategory, setSelectedCategory] = useState<'All' | ProjectCategory>('All');
   const [selectedWorkType, setSelectedWorkType] = useState<'all' | WorkType>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'editorial'>('grid');
+  const [viewMode, setViewMode] = useState<'gallery' | 'grid' | 'editorial'>('gallery');
 
   const published = projects.filter((p) => p.status === 'published');
 
@@ -38,14 +38,14 @@ export const WorkPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-3">
               <Film className="w-3.5 h-3.5" />
-              <span>/ ARCHIVE & CASE STUDIES</span>
+              <span>/ FILMS & VIDEO VAULT</span>
             </div>
             <h1 className="text-4xl md:text-7xl font-bold uppercase tracking-tight text-white font-syne">
               ALL FILMS & WORKS
             </h1>
           </div>
           <p className="text-sm text-zinc-400 max-w-sm mt-4 md:mt-0 font-hebrew">
-            מאגר הפקות הקולנוע, הפרסומות ופרויקטי הקונספט. לחיצה על פרויקט פותחת את ה-Case Study המלא.
+            מאגר הסרטים והפקות ה-AI של AmitAI. לחיצה על כל סרטון מפעילה צפייה ישירה באיכות מלאה.
           </p>
         </div>
 
@@ -102,7 +102,17 @@ export const WorkPage: React.FC = () => {
             </div>
 
             {/* View Mode Toggle */}
-            <div className="hidden sm:flex items-center gap-1 p-1 rounded-lg bg-white/5 border border-white/10 text-zinc-400">
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-white/5 border border-white/10 text-zinc-400">
+              <button
+                onClick={() => setViewMode('gallery')}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors ${
+                  viewMode === 'gallery' ? 'bg-amber-400 text-black font-bold' : 'hover:text-white'
+                }`}
+                title="גלריית וידאו (צפייה ישירה)"
+              >
+                <PlaySquare className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">גלריה</span>
+              </button>
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded transition-colors ${viewMode === 'grid' ? 'bg-zinc-800 text-white' : 'hover:text-white'}`}
@@ -137,6 +147,12 @@ export const WorkPage: React.FC = () => {
               איפוס סינונים
             </button>
           </div>
+        ) : viewMode === 'gallery' ? (
+          <VideoGalleryGrid
+            projects={filteredProjects}
+            title="סרטים והפקות"
+            subtitle="לחץ על כל סרט לצפייה מלאה עם סאונד"
+          />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filteredProjects.map((project) => (

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
-import { VideoPreviewCard } from '../components/video/VideoPreviewCard';
+import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
 
 export const HomePage: React.FC = () => {
@@ -11,9 +11,6 @@ export const HomePage: React.FC = () => {
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
-  const featuredProjects = publishedProjects
-    .sort((a, b) => a.homepageOrder - b.homepageOrder)
-    .slice(0, 4);
 
   useEffect(() => {
     if (heroVideoRef.current) {
@@ -24,7 +21,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const scrollToWork = () => {
-    const el = document.getElementById('selected-work');
+    const el = document.getElementById('film-gallery');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -39,7 +36,7 @@ export const HomePage: React.FC = () => {
           {/* Static Hero Poster (Tier 1: Instant load) */}
           <img
             src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=2000&q=85"
-            alt="AI Film Studio Hero"
+            alt="AmitAI Film Studio Hero"
             className="w-full h-full object-cover brightness-40"
             loading="eager"
           />
@@ -66,7 +63,7 @@ export const HomePage: React.FC = () => {
         <div className="relative z-10 max-w-7xl mx-auto w-full pt-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-300 text-xs font-mono tracking-widest uppercase">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span>AI FILM · CREATIVE · STORYTELLING</span>
+            <span>AmitAI · AMITAY COHEN · AI FILM & CREATIVE DIRECTION</span>
           </div>
         </div>
 
@@ -83,7 +80,7 @@ export const HomePage: React.FC = () => {
             </h1>
 
             <p className="text-lg sm:text-2xl text-zinc-300 font-light max-w-2xl font-hebrew leading-relaxed mb-8">
-              סטודיו הפקה ובימוי המשלב קריאייטיב עמוק, סטוריטלינג וטכנולוגיות Generative Cinema ליצירת סרטים ופרסומות באיכות קולנועית.
+              סטודיו הפקה ובימוי של אמיתי כהן (AmitAI) — שילוב של קריאייטיב עמוק, סטוריטלינג וטכנולוגיות Generative Cinema ליצירת סרטים ופרסומות באיכות קולנועית.
             </p>
 
             {/* CTAs */}
@@ -92,7 +89,7 @@ export const HomePage: React.FC = () => {
                 onClick={scrollToWork}
                 className="group flex items-center gap-3 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase tracking-wider text-sm transition-all shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:scale-105"
               >
-                <span>צפו בעבודות</span>
+                <span>צפו בגלריית הסרטים</span>
                 <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-1" />
               </button>
 
@@ -115,51 +112,26 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-6">
-            <span>SELECTED CASE STUDIES ({publishedProjects.length})</span>
+            <span>SELECTED FILMS ({publishedProjects.length})</span>
             <span className="text-amber-400">2026 REEL</span>
           </div>
         </div>
       </section>
 
-      {/* 2. SELECTED WORK (Editorial Layout with Alternating Split) */}
-      <section id="selected-work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between pb-12 mb-8 border-b border-white/10">
-          <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
-              / תיק עבודות נבחר
-            </span>
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tight text-white font-syne">
-              SELECTED FILMS
-            </h2>
-          </div>
-          <Link
-            to="/work"
-            className="group flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-zinc-400 hover:text-white mt-4 md:mt-0 transition-colors"
-          >
-            <span>לכל הפרויקטים וה-Archive</span>
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </Link>
-        </div>
-
-        {/* Alternating Editorial Projects */}
-        <div className="flex flex-col">
-          {featuredProjects.map((project, idx) => (
-            <VideoPreviewCard
-              key={project.id}
-              project={project}
-              layout="editorial"
-              reversed={idx % 2 === 1}
-              projectIndex={idx + 1}
-            />
-          ))}
-        </div>
+      {/* 2. DIRECT VIDEO GALLERY (Instant 1-Click Play) */}
+      <section id="film-gallery" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <VideoGalleryGrid
+          projects={publishedProjects}
+          title="גלריית הסרטים וההפקות"
+          subtitle="צפייה ישירה ומיידית בכל הסרטים"
+        />
 
         <div className="pt-16 text-center">
           <Link
             to="/work"
             className="inline-flex items-center gap-3 px-10 py-5 rounded-full bg-[#121216] hover:bg-amber-500/10 text-white hover:text-amber-300 border border-white/10 hover:border-amber-500/40 text-sm font-syne font-bold uppercase tracking-widest transition-all"
           >
-            <span>צפו בכל העבודות וה-Case Studies</span>
+            <span>לכל העבודות וה-Case Studies המלאים</span>
             <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>

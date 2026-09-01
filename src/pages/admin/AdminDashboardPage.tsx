@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useProjects } from '../../context/ProjectContext';
+import type { Project, ProjectCategory } from '../../types/project';
 import {
   Plus,
   Edit,
@@ -13,13 +14,17 @@ import {
   LogOut,
   Inbox,
   RefreshCw,
-  Layers
+  Layers,
+  Zap,
+  X,
+  Play
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const {
     projects,
+    createProject,
     deleteProject,
     toggleFeatured,
     inquiries,
@@ -29,6 +34,16 @@ export const AdminDashboardPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'projects' | 'inquiries'>('projects');
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
+
+  // Quick Video Add Modal State
+  const [quickModalOpen, setQuickModalOpen] = useState(false);
+  const [quickTitle, setQuickTitle] = useState('');
+  const [quickVideoUrl, setQuickVideoUrl] = useState('');
+  const [quickClient, setQuickClient] = useState('');
+  const [quickDuration, setQuickDuration] = useState('');
+  const [quickCategory, setQuickCategory] = useState<ProjectCategory>('Commercial');
+  const [quickPosterUrl, setQuickPosterUrl] = useState('');
+  const [quickSaving, setQuickSaving] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/admin" replace />;
@@ -46,6 +61,104 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const parseVideoInput = (input: string) => {
+    const trimmed = input.trim();
+    // Check if Vimeo URL or Vimeo ID
+    if (trimmed.includes('vimeo.com')) {
+      const parts = trimmed.split('?')[0].split('/');
+      const id = parts.pop() || parts.pop();
+      return { provider: 'vimeo' as const, videoId: id, masterUrl: `https://player.vimeo.com/video/${id}` };
+    }
+    // Check if pure numbers (Vimeo ID)
+    if (/^\d+$/.test(trimmed)) {
+      return { provider: 'vimeo' as const, videoId: trimmed, masterUrl: `https://player.vimeo.com/video/${trimmed}` };
+    }
+    // Check if YouTube
+    if (trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
+      let id = '';
+      if (trimmed.includes('v=')) {
+        id = trimmed.split('v=')[1]?.split('&')[0];
+      } else if (trimmed.includes('youtu.be/')) {
+        id = trimmed.split('youtu.be/')[1]?.split('?')[0];
+      }
+      return { provider: 'youtube' as const, videoId: id, masterUrl: `https://www.youtube.com/embed/${id}` };
+    }
+    // Default direct
+    return { provider: 'direct' as const, videoId: '', masterUrl: trimmed };
+  };
+
+  const handleQuickAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickTitle.trim() || !quickVideoUrl.trim()) return;
+
+    setQuickSaving(true);
+    try {
+      const parsed = parseVideoInput(quickVideoUrl);
+      const generatedSlug = quickTitle
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '') || `film-${Date.now()}`;
+
+      const defaultPoster = quickPosterUrl.trim() || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=85';
+
+      const newProjectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'> = {
+        title: quickTitle.trim(),
+        slug: generatedSlug,
+        subtitle: quickClient ? `הפקה עבור ${quickClient}` : 'AI Film Production',
+        client: quickClient.trim() || 'Studio Production',
+        year: '2026',
+        category: quickCategory,
+        workType: 'client_work',
+        status: 'published',
+        featured: true,
+        homepageOrder: 1,
+        projectType: 'AI Film Production',
+        role: 'בימוי והפקת סרטי AI מלאה',
+        video: {
+          provider: parsed.provider,
+          videoId: parsed.videoId,
+          masterUrl: parsed.masterUrl,
+          posterUrl: defaultPoster,
+          duration: quickDuration.trim() || '01:00',
+          aspectRatio: '16:9'
+        },
+        challenge: 'הפקה קולנועית מותאמת אישית.',
+        idea: 'שילוב של בימוי קפדני, טכנולוגיות Generative Cinema וסאונד מותאם.',
+        shortDescription: quickClient ? `סרט AI עבור ${quickClient}` : quickTitle,
+        processSteps: [],
+        productionStats: {
+          shotsCount: 12,
+          locationsCount: 2,
+          charactersCount: 1,
+          filmingDays: 0,
+          finalDuration: quickDuration.trim() || '01:00'
+        },
+        credits: {
+          creativeDirection: 'אמיתי כהן (AmitAI)',
+          director: 'אמיתי כהן',
+          aiFilm: 'AmitAI Studio',
+          client: quickClient || ''
+        },
+        techStack: ['Midjourney v6.1', 'Runway Gen-3', 'Kling AI', 'DaVinci Resolve Studio'],
+        gallery: []
+      };
+
+      await createProject(newProjectData);
+      setQuickModalOpen(false);
+      setQuickTitle('');
+      setQuickVideoUrl('');
+      setQuickClient('');
+      setQuickDuration('');
+      setQuickPosterUrl('');
+    } catch (err) {
+      console.error('Failed to quick add video:', err);
+    } finally {
+      setQuickSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans pb-20 film-grain">
       {/* Top Admin Header */}
@@ -57,7 +170,7 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <div>
               <span className="font-syne font-bold text-white uppercase text-base block">
-                STUDIO CMS
+                AmitAI · STUDIO CMS
               </span>
               <span className="text-xs text-zinc-400 font-mono">
                 DIRECTOR: {user?.email}
@@ -105,7 +218,7 @@ export const AdminDashboardPage: React.FC = () => {
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>פרויקטים ({projects.length})</span>
+              <span>כל הסרטים והגלריה ({projects.length})</span>
             </button>
 
             <button
@@ -117,12 +230,12 @@ export const AdminDashboardPage: React.FC = () => {
               }`}
             >
               <Inbox className="w-4 h-4" />
-              <span>פניות לידים ({inquiries.length})</span>
+              <span>פניות ובריפים ({inquiries.length})</span>
             </button>
           </div>
 
-          {/* New Project & Reset Actions */}
-          <div className="flex items-center gap-3">
+          {/* Actions: Quick Video Add (Fast!) + Full Project Builder */}
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => {
                 if (window.confirm('האם לשחזר את פרויקטי הדגל המקוריים?')) {
@@ -135,138 +248,140 @@ export const AdminDashboardPage: React.FC = () => {
               <RefreshCw className="w-4 h-4" />
             </button>
 
+            {/* FAST QUICK ADD BUTTON */}
+            <button
+              type="button"
+              onClick={() => setQuickModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-syne font-bold uppercase tracking-wider text-xs transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105"
+            >
+              <Zap className="w-4 h-4 fill-current" />
+              <span>העלאה מהירה (כותרת + קישור)</span>
+            </button>
+
+            {/* Detailed 7-step builder */}
             <Link
               to="/admin/builder/new"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase tracking-wider text-xs transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105"
+              className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 text-xs font-mono uppercase tracking-wider transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>+ NEW PROJECT (הוספת סרט)</span>
+              <span>הפקת Case Study מלא (7 שלבים)</span>
             </Link>
           </div>
         </div>
 
-        {/* TAB 1: PROJECTS MANAGEMENT */}
+        {/* Tab 1: Projects & Video Gallery */}
         {activeTab === 'projects' && (
-          <div>
-            {/* Status Filter */}
-            <div className="flex items-center gap-2 mb-6 text-xs font-mono">
-              <button
-                onClick={() => setFilterStatus('all')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filterStatus === 'all' ? 'bg-zinc-800 text-white font-bold' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                כל הסטטוסים ({projects.length})
-              </button>
-              <button
-                onClick={() => setFilterStatus('published')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filterStatus === 'published' ? 'bg-zinc-800 text-emerald-400 font-bold' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                פורסמו ({projects.filter((p) => p.status === 'published').length})
-              </button>
-              <button
-                onClick={() => setFilterStatus('draft')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filterStatus === 'draft' ? 'bg-zinc-800 text-amber-400 font-bold' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                טיוטות ({projects.filter((p) => p.status === 'draft').length})
-              </button>
+          <div className="space-y-6">
+            {/* Filter Pills */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setFilterStatus('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                    filterStatus === 'all' ? 'bg-zinc-800 text-white font-bold' : 'text-zinc-500 hover:text-zinc-300'
+                  }`}
+                >
+                  הכל ({projects.length})
+                </button>
+                <button
+                  onClick={() => setFilterStatus('published')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                    filterStatus === 'published' ? 'bg-zinc-800 text-white font-bold' : 'text-zinc-500 hover:text-zinc-300'
+                  }`}
+                >
+                  באוויר / Published ({projects.filter((p) => p.status === 'published').length})
+                </button>
+              </div>
+
+              <span className="text-xs font-mono text-zinc-500">
+                סה"כ {filteredProjects.length} פרויקטים בגלריה
+              </span>
             </div>
 
-            {/* Projects Table / Card List */}
-            <div className="space-y-4">
-              {filteredProjects.map((project, idx) => (
+            {/* Video Items Cards List */}
+            <div className="grid grid-cols-1 gap-4">
+              {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="p-5 md:p-6 rounded-2xl bg-[#121216] border border-white/10 hover:border-white/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+                  className="bg-[#121216] border border-white/10 rounded-xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-white/20 transition-all"
                 >
-                  {/* Left: Thumbnail & Meta */}
-                  <div className="flex items-center gap-5">
-                    <div className="relative w-28 h-16 rounded-lg overflow-hidden bg-black flex-shrink-0 border border-white/10">
+                  {/* Thumbnail & Title */}
+                  <div className="flex items-center gap-5 w-full md:w-auto">
+                    <div className="relative aspect-video w-32 md:w-40 rounded-lg overflow-hidden bg-black flex-shrink-0 border border-white/10">
                       <img
-                        src={project.video.posterUrl}
+                        src={project.video.posterUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80'}
                         alt={project.title}
                         className="w-full h-full object-cover"
                       />
-                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/80 rounded text-[9px] font-mono text-zinc-300">
-                        {project.video.duration || '00:00'}
-                      </span>
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <Play className="w-5 h-5 text-white fill-current opacity-80" />
+                      </div>
+                      {project.video.duration && (
+                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-amber-400">
+                          {project.video.duration}
+                        </span>
+                      )}
                     </div>
 
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span className="font-mono text-xs text-amber-400">
-                          #{idx + 1}
+                    <div className="text-right">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[11px] font-mono text-amber-400 font-bold uppercase">
+                          {project.client}
                         </span>
-                        {project.workType === 'client_work' ? (
-                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">
-                            Client Work
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
-                            Concept / Original
-                          </span>
-                        )}
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5 text-zinc-400">
+                        <span className="text-zinc-600 text-xs">•</span>
+                        <span className="text-[11px] font-mono text-zinc-400">
                           {project.category}
                         </span>
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5 text-zinc-400">
-                          {project.video.provider.toUpperCase()}
-                        </span>
                       </div>
-
-                      <h3 className="font-syne text-lg font-bold text-white uppercase group-hover:text-amber-300 transition-colors">
+                      <h3 className="font-syne font-bold text-white text-base md:text-lg">
                         {project.title}
                       </h3>
-                      <p className="text-xs text-zinc-400 font-mono">
-                        Client: {project.client} · Year: {project.year} · Slug: <code className="text-zinc-300">/work/{project.slug}</code>
+                      <p className="text-xs text-zinc-400 font-mono mt-1">
+                        {project.video.provider.toUpperCase()} · ID: {project.video.videoId || 'Direct'}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right: Status & Actions */}
-                  <div className="flex items-center gap-3 self-end md:self-center">
+                  {/* Actions & Toggles */}
+                  <div className="flex items-center gap-3 self-end md:self-auto">
                     {/* Featured Toggle */}
                     <button
                       onClick={() => toggleFeatured(project.id)}
-                      className={`p-2.5 rounded-lg border transition-colors ${
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-mono transition-colors ${
                         project.featured
-                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
-                          : 'bg-white/5 border-white/5 text-zinc-500 hover:text-zinc-300'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          : 'bg-white/5 text-zinc-500 hover:text-zinc-300 border border-white/5'
                       }`}
-                      title={project.featured ? 'מוצג בדף הבית' : 'סמן לתצוגה בדף הבית'}
+                      title={project.featured ? 'מוצג בדף הבית' : 'הצג בדף הבית'}
                     >
-                      <Star className="w-4 h-4 fill-current" />
+                      <Star className={`w-3.5 h-3.5 ${project.featured ? 'fill-current' : ''}`} />
+                      <span>{project.featured ? 'מוצג ראשי' : 'רגיל'}</span>
                     </button>
 
                     {/* View Live */}
                     <Link
                       to={`/work/${project.slug}`}
                       target="_blank"
-                      rel="noopener noreferrer"
                       className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 transition-colors"
-                      title="צפייה בעמוד ה-Case Study"
+                      title="צפה באתר"
                     >
                       <Eye className="w-4 h-4" />
                     </Link>
 
-                    {/* Edit Project in Builder */}
+                    {/* Edit Builder */}
                     <Link
                       to={`/admin/builder/${project.id}`}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono uppercase tracking-wider transition-colors"
+                      className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 hover:text-amber-300 border border-white/10 transition-colors"
+                      title="עריכה מלאה"
                     >
-                      <Edit className="w-3.5 h-3.5" />
-                      <span>עריכה ב-Builder</span>
+                      <Edit className="w-4 h-4" />
                     </Link>
 
-                    {/* Delete Project */}
+                    {/* Delete */}
                     <button
                       onClick={() => handleDelete(project.id, project.title)}
-                      className="p-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-colors"
-                      title="מחק פרויקט"
+                      className="p-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 transition-colors"
+                      title="מחיקת סרטון"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -277,65 +392,191 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: CONTACT INQUIRIES */}
+        {/* Tab 2: Inquiries */}
         {activeTab === 'inquiries' && (
-          <div>
-            <h3 className="font-syne text-xl font-bold uppercase text-white mb-6">
-              פניות ובריפים מלקוחות באתר
-            </h3>
-
+          <div className="space-y-4">
             {inquiries.length === 0 ? (
-              <div className="p-16 text-center bg-[#121216] border border-white/10 rounded-2xl">
-                <Inbox className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-                <h4 className="font-syne text-lg font-bold uppercase text-white mb-1">
-                  אין פניות חדשות כרגע
-                </h4>
-                <p className="text-xs text-zinc-400 font-hebrew">
-                  פניות שיישלחו דרך טופס יצירת הקשר באתר יופיעו כאן בזמן אמת.
+              <div className="py-20 text-center border border-dashed border-white/10 rounded-2xl bg-[#121216]/50">
+                <Inbox className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+                <h4 className="font-syne text-lg font-bold text-white uppercase">אין פניות חדשות</h4>
+                <p className="text-xs text-zinc-500 font-hebrew mt-1">
+                  פניות מטופס ה-Contact יופיעו כאן בזמן אמת.
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {inquiries.map((inq) => (
-                  <div
-                    key={inq.id}
-                    className="p-6 rounded-2xl bg-[#121216] border border-white/10 space-y-4"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-4">
-                      <div>
-                        <h4 className="font-syne text-base font-bold text-white">
-                          {inq.name} {inq.company ? `(${inq.company})` : ''}
-                        </h4>
-                        <p className="text-xs text-zinc-400 font-mono mt-0.5">
-                          {inq.email} · {inq.phone || 'אין טלפון'}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono px-2.5 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">
-                          {inq.projectType}
-                        </span>
-                        <span className="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-zinc-400">
-                          {inq.budgetRange}
-                        </span>
-                        <span className="text-xs font-mono text-zinc-500">
-                          {new Date(inq.createdAt).toLocaleDateString('he-IL')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="text-xs font-mono text-zinc-500 uppercase block mb-1">בריף הפרויקט:</span>
-                      <p className="text-sm text-zinc-300 font-hebrew leading-relaxed bg-[#09090b] p-4 rounded-lg border border-white/5">
-                        {inq.brief}
-                      </p>
-                    </div>
+              inquiries.map((inq) => (
+                <div
+                  key={inq.id}
+                  className="bg-[#121216] border border-white/10 rounded-xl p-6 text-right space-y-3"
+                >
+                  <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                    <span className="text-xs font-mono text-zinc-500">
+                      {new Date(inq.createdAt).toLocaleDateString('he-IL')}
+                    </span>
+                    <span className="font-syne font-bold text-white text-base">
+                      {inq.name} {inq.company ? `(${inq.company})` : ''}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <div className="text-xs text-zinc-400 space-y-1 font-mono">
+                    <p>אימייל: <span className="text-white">{inq.email}</span></p>
+                    {inq.phone && <p>טלפון: <span className="text-white">{inq.phone}</span></p>}
+                    <p>סוג פרויקט: <span className="text-amber-400">{inq.projectType}</span></p>
+                  </div>
+                  <div className="p-4 bg-[#09090b] rounded-lg text-sm text-zinc-300 font-hebrew">
+                    {inq.brief}
+                  </div>
+                </div>
+              ))
             )}
           </div>
         )}
       </div>
+
+      {/* QUICK VIDEO ADD MODAL (30-SECOND UPLOAD) */}
+      {quickModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#121216] border border-amber-500/30 rounded-2xl p-6 md:p-8 shadow-2xl relative text-right animate-scale-up">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-400 text-black flex items-center justify-center">
+                  <Zap className="w-4 h-4 fill-current" />
+                </div>
+                <div>
+                  <h3 className="font-syne text-lg font-bold uppercase text-white">
+                    העלאה מהירה של סרטון
+                  </h3>
+                  <span className="text-[11px] font-mono text-zinc-400">
+                    רק כותרת + קישור — והסרטון מופיע מיד באתר
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setQuickModalOpen(false)}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleQuickAdd} className="space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                  שם / כותרת הסרטון *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={quickTitle}
+                  onChange={(e) => setQuickTitle(e.target.value)}
+                  placeholder="לדוגמה: אגף הסייבר — משרד המשפטים"
+                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Video URL */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                  קישור לסרטון (Vimeo / YouTube / MP4 / מזהה) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={quickVideoUrl}
+                  onChange={(e) => setQuickVideoUrl(e.target.value)}
+                  placeholder="https://vimeo.com/1222907638 או 1222907638"
+                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-amber-400"
+                />
+                <p className="text-[11px] text-zinc-500 mt-1 font-hebrew">
+                  אפשר להדביק קישור מלא של Vimeo, YouTube, או מספר ID ישיר.
+                </p>
+              </div>
+
+              {/* Client & Duration */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                    שם הלקוח / מותג (אופציונלי)
+                  </label>
+                  <input
+                    type="text"
+                    value={quickClient}
+                    onChange={(e) => setQuickClient(e.target.value)}
+                    placeholder="משרד המשפטים"
+                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                    אורך הסרט (אופציונלי)
+                  </label>
+                  <input
+                    type="text"
+                    value={quickDuration}
+                    onChange={(e) => setQuickDuration(e.target.value)}
+                    placeholder="03:13"
+                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                  קטגוריה
+                </label>
+                <select
+                  value={quickCategory}
+                  onChange={(e) => setQuickCategory(e.target.value as ProjectCategory)}
+                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400"
+                >
+                  <option value="Commercial">Commercial (פרסומות ומסחרי)</option>
+                  <option value="Storytelling">Storytelling (סרטים עלילתיים)</option>
+                  <option value="Product">Product (מוצרים ויוקרה)</option>
+                  <option value="Social">Social (סושיאל)</option>
+                  <option value="Education">Education (חינוכי והדרכה)</option>
+                  <option value="Experimental">Experimental (ניסיוני / R&D)</option>
+                </select>
+              </div>
+
+              {/* Poster Image URL */}
+              <div>
+                <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
+                  קישור לתמונת פוסטר (אופציונלי)
+                </label>
+                <input
+                  type="text"
+                  value={quickPosterUrl}
+                  onChange={(e) => setQuickPosterUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/... (ריק = פוסטר אוטומטי)"
+                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setQuickModalOpen(false)}
+                  className="px-4 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 text-xs font-mono uppercase"
+                >
+                  ביטול
+                </button>
+                <button
+                  type="submit"
+                  disabled={quickSaving}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase text-xs transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] disabled:opacity-50"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-current" />
+                  <span>{quickSaving ? 'שומר...' : 'הוסף מיד לגלריה'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

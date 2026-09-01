@@ -2,6 +2,57 @@ import type { Project } from '../types/project';
 
 export const SHOWCASE_PROJECTS: Project[] = [
   {
+    id: 'proj-cyber-justice',
+    slug: 'cyber-justice',
+    title: 'אגף הסייבר — משרד המשפטים | המפרץ הפרסי',
+    subtitle: 'סרט סיכול סייבר ומבצעים מיוחדים',
+    client: 'משרד המשפטים — אגף הסייבר',
+    year: '2026',
+    category: 'Commercial',
+    workType: 'client_work',
+    status: 'published',
+    featured: true,
+    homepageOrder: 1,
+    projectType: 'AI Cinematic Production',
+    role: 'בימוי, קריאייטיב והפקת סרטי AI מלאה',
+    
+    video: {
+      provider: 'vimeo',
+      videoId: '1222907638',
+      masterUrl: 'https://player.vimeo.com/video/1222907638',
+      posterUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1920&q=85',
+      aspectRatio: '16:9',
+      duration: '03:13'
+    },
+    
+    challenge: 'המחשת פעילות אגף בכיר חירום, ביטחון, מידע וסייבר של משרד המשפטים בזירה המבצעית והגנת המרחב הדיגיטלי הלאומי.',
+    idea: 'נרטיב קולנועי מותח המשלב טלמטריה מתקדמת, לוקיישנים מדבריים וימיים, וייצוג עוצמתי של פעילות הגנת הסייבר ללא צורך בצילומים מסווגים.',
+    conceptArtUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=85',
+    shortDescription: 'סרט תדמית ומבצעים עוצמתי עבור אגף הסייבר במשרד המשפטים — הפקה קולנועית מלאה ב-AI.',
+    fullDescription: 'הפקה קולנועית מותאמת עבור משרד המשפטים ואגף הסייבר והחירום. שילוב של סטוריטלינג מותח, ויזואליה עשירה, הדמיות טכנולוגיות ועיצוב סאונד עוצמתי.',
+    
+    processSteps: [],
+    productionStats: {
+      shotsCount: 22,
+      locationsCount: 5,
+      charactersCount: 3,
+      filmingDays: 0,
+      finalDuration: '03:13'
+    },
+    credits: {
+      creativeDirection: 'אמיתי כהן (AmitAI)',
+      director: 'אמיתי כהן',
+      aiFilm: 'AmitAI Studio',
+      editing: 'AmitAI Post',
+      soundDesign: 'Cinematic Soundscapes',
+      client: 'משרד המשפטים'
+    },
+    techStack: ['Midjourney v6.1', 'Runway Gen-3', 'Kling AI', 'DaVinci Resolve Studio'],
+    gallery: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
     id: 'proj-cbc-ramadan',
     slug: 'cbc-ramadan',
     title: 'CBC — Ramadan Campaign',
@@ -12,7 +63,7 @@ export const SHOWCASE_PROJECTS: Project[] = [
     workType: 'client_work',
     status: 'published',
     featured: true,
-    homepageOrder: 1,
+    homepageOrder: 2,
     projectType: 'AI Commercial Film',
     role: 'Concept / Creative Direction / AI Film / Editing / Sound',
     
