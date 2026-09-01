@@ -2,247 +2,744 @@ import type { Project } from '../types/project';
 
 export const SHOWCASE_PROJECTS: Project[] = [
   {
-    id: 'proj-cyber-justice',
-    slug: 'cyber-justice',
-    title: 'אגף הסייבר — משרד המשפטים | המפרץ הפרסי',
-    subtitle: 'סרט סיכול סייבר ומבצעים מיוחדים',
-    client: 'משרד המשפטים — אגף הסייבר',
-    year: '2026',
-    category: 'Commercial',
-    workType: 'client_work',
-    status: 'published',
-    featured: true,
-    homepageOrder: 1,
-    projectType: 'AI Cinematic Production',
-    role: 'בימוי, קריאייטיב והפקת סרטי AI מלאה',
-    
-    video: {
-      provider: 'vimeo',
-      videoId: '1222907638',
-      masterUrl: 'https://player.vimeo.com/video/1222907638',
-      posterUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '03:13'
+    "id": "proj-cbc-venue",
+    "slug": "cbc-venue",
+    "title": "CBC — Grand Venue & Luxury Red Carpet",
+    "subtitle": "CBC Israel",
+    "client": "CBC Israel",
+    "year": "2026",
+    "category": "Commercial",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 1,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי והפקת סרטי AI מלאה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/cbc-venue.mp4",
+      "previewUrl": "/videos/cbc-venue.mp4",
+      "posterUrl": "/thumbnails/cbc-venue.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'המחשת פעילות אגף בכיר חירום, ביטחון, מידע וסייבר של משרד המשפטים בזירה המבצעית והגנת המרחב הדיגיטלי הלאומי.',
-    idea: 'נרטיב קולנועי מותח המשלב טלמטריה מתקדמת, לוקיישנים מדבריים וימיים, וייצוג עוצמתי של פעילות הגנת הסייבר ללא צורך בצילומים מסווגים.',
-    conceptArtUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=85',
-    shortDescription: 'סרט תדמית ומבצעים עוצמתי עבור אגף הסייבר במשרד המשפטים — הפקה קולנועית מלאה ב-AI.',
-    fullDescription: 'הפקה קולנועית מותאמת עבור משרד המשפטים ואגף הסייבר והחירום. שילוב של סטוריטלינג מותח, ויזואליה עשירה, הדמיות טכנולוגיות ועיצוב סאונד עוצמתי.',
-    
-    processSteps: [],
-    productionStats: {
-      shotsCount: 22,
-      locationsCount: 5,
-      charactersCount: 3,
-      filmingDays: 0,
-      finalDuration: '03:13'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "הפקה קולנועית יוקרתית עבור CBC — שילוב של היכל אירועים גרנדיוזי, שטיח אדום ותאורת ערב.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    credits: {
-      creativeDirection: 'אמיתי כהן (AmitAI)',
-      director: 'אמיתי כהן',
-      aiFilm: 'AmitAI Studio',
-      editing: 'AmitAI Post',
-      soundDesign: 'Cinematic Soundscapes',
-      client: 'משרד המשפטים'
-    },
-    techStack: ['Midjourney v6.1', 'Runway Gen-3', 'Kling AI', 'DaVinci Resolve Studio'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:30:05.497Z",
+    "updatedAt": "2026-09-01T10:30:05.503Z"
   },
   {
-    id: 'proj-shomer-al-atzmi',
-    slug: 'shomer-al-atzmi',
-    title: 'שומר על עצמי בקש״ר — כיתות ח׳',
-    subtitle: 'סרטון הדרכה ומודעות ברשתות החברתיות',
-    client: 'חינוך ומודעות דיגיטלית',
-    year: '2026',
-    category: 'Education',
-    workType: 'client_work',
-    status: 'published',
-    featured: true,
-    homepageOrder: 2,
-    projectType: 'סרטון מודעות והדרכה ב-AI',
-    role: 'בימוי, קריאייטיב והפקה מלאה',
-    
-    video: {
-      provider: 'direct',
-      masterUrl: '/videos/shomer-al-atzmi.mp4',
-      previewUrl: '/videos/shomer-al-atzmi.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '01:15'
+    "id": "proj-cbc-power-train",
+    "slug": "cbc-power-train",
+    "title": "CBC — רכבת העוצמה במדבר",
+    "subtitle": "CBC",
+    "client": "CBC",
+    "year": "2026",
+    "category": "Commercial",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 2,
+    "projectType": "סרט AI קולנועי",
+    "role": "קריאייטיב ובימוי תנועה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/cbc-power-train.mp4",
+      "previewUrl": "/videos/cbc-power-train.mp4",
+      "posterUrl": "/thumbnails/cbc-power-train.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'העברת מסר מורכב של זהירות ברשתות החברתיות לנוער בצורה מרתקת וויזואלית.',
-    idea: 'שימוש בדימויים דינמיים, עריכה קצבית ועיצוב דמויות מותאם לגילאי חטיבת הביניים.',
-    shortDescription: 'סרטון מודעות בנושא בטיחות ברשת — הפקה ייעודית מלאה.',
-    processSteps: [],
-    productionStats: {
-      shotsCount: 14,
-      locationsCount: 3,
-      charactersCount: 2,
-      filmingDays: 0,
-      finalDuration: '01:15'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "רכבת מהירה החוצה נופי מדבר מרהיבים — שליטה מתקדמת בתנועת מצלמה ואפקטים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    credits: {
-      creativeDirection: 'אמיתי כהן (AmitAI)',
-      director: 'אמיתי כהן',
-      aiFilm: 'AmitAI Studio'
-    },
-    techStack: ['AI Generative Video', 'DaVinci Resolve Studio'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:31:31.113Z",
+    "updatedAt": "2026-09-01T10:31:31.113Z"
   },
   {
-    id: 'proj-nativ-final',
-    slug: 'nativ-final',
-    title: 'סרטון נתיב — הפקה קולנועית',
-    subtitle: 'פרויקט נתיב',
-    client: 'נתיב',
-    year: '2026',
-    category: 'Storytelling',
-    workType: 'client_work',
-    status: 'published',
-    featured: true,
-    homepageOrder: 3,
-    projectType: 'הפקה עלילתית ב-AI',
-    role: 'בימוי והפקה',
-    
-    video: {
-      provider: 'direct',
-      masterUrl: '/videos/nativ-final.mp4',
-      previewUrl: '/videos/nativ-final.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '00:50'
+    "id": "proj-cyber-methodica",
+    "slug": "cyber-methodica",
+    "title": "אגף הסייבר של משרד המשפטים — מתודיקה",
+    "subtitle": "משרד המשפטים",
+    "client": "משרד המשפטים",
+    "year": "2026",
+    "category": "Storytelling",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 3,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי קולנועי והדמיות סייבר",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/cyber-methodica.mp4",
+      "previewUrl": "/videos/cyber-methodica.mp4",
+      "posterUrl": "/thumbnails/cyber-methodica.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'הצגת החזון והמהות של פרויקט נתיב בצורה קולנועית ומעוררת השראה.',
-    idea: 'שילוב פריימים פנורמיים, תנועת מצלמה חלקה ופסקול סוחף.',
-    shortDescription: 'הפקה קולנועית לפרויקט נתיב בטכנולוגיית AI מתקדמת.',
-    processSteps: [],
-    productionStats: {},
-    credits: {
-      director: 'אמיתי כהן (AmitAI)'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרט תדמית וסיכול סייבר מותח עבור אגף בכיר חירום וסייבר במשרד המשפטים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    techStack: ['AI Film', 'DaVinci Resolve'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:32:30.707Z",
+    "updatedAt": "2026-09-01T10:32:30.707Z"
   },
   {
-    id: 'proj-podcast-v5',
-    slug: 'podcast-v5',
-    title: 'פודקאסט — פרק קונספט ויזואלי',
-    subtitle: 'פודקאסט וידאו מבוסס AI',
-    client: 'AmitAI Studio',
-    year: '2026',
-    category: 'Commercial',
-    workType: 'client_work',
-    status: 'published',
-    featured: true,
-    homepageOrder: 4,
-    projectType: 'וידאו פודקאסט',
-    role: 'עריכה ובימוי ויזואלי',
-    
-    video: {
-      provider: 'direct',
-      masterUrl: '/videos/podcast-v5.mp4',
-      previewUrl: '/videos/podcast-v5.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '02:00'
+    "id": "proj-terra-agriculture",
+    "slug": "terra-agriculture",
+    "title": "טרה — חקלאות ועוצמה ישראלית",
+    "subtitle": "טרה",
+    "client": "טרה",
+    "year": "2026",
+    "category": "Commercial",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 4,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי והפקת סרט AI",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/terra-agriculture.mp4",
+      "previewUrl": "/videos/terra-agriculture.mp4",
+      "posterUrl": "/thumbnails/terra-agriculture.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'יצירת עטיפה ויזואלית מלאה לפודקאסט.',
-    idea: 'הדמיות ויזואליות עשירות המלוות את הדיון.',
-    shortDescription: 'סרטון פודקאסט ויזואלי בהפקה מלאה.',
-    processSteps: [],
-    productionStats: {},
-    credits: {
-      director: 'אמיתי כהן (AmitAI)'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "צילומי אוויר והדמיות שדות וחקלאות מתקדמת ברחבי הארץ.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    techStack: ['AI Video', 'Sound Mix'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:11.382Z",
+    "updatedAt": "2026-09-01T10:33:11.382Z"
   },
   {
-    id: 'proj-nativ-v2',
-    slug: 'nativ-v2',
-    title: 'נתיב — גרסה 2',
-    subtitle: 'עריכה אלטרנטיבית',
-    client: 'נתיב',
-    year: '2026',
-    category: 'Storytelling',
-    workType: 'client_work',
-    status: 'published',
-    featured: false,
-    homepageOrder: 5,
-    projectType: 'סרטון קונספט',
-    role: 'בימוי',
-    
-    video: {
-      provider: 'direct',
-      masterUrl: '/videos/nativ-v2.mp4',
-      previewUrl: '/videos/nativ-v2.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '01:00'
+    "id": "proj-nativ-system-presentation",
+    "slug": "nativ-system-presentation",
+    "title": "מערכת נתיב — פרזנטציה והקמה",
+    "subtitle": "רכבת ישראל / נתיב",
+    "client": "רכבת ישראל / נתיב",
+    "year": "2026",
+    "category": "Education",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 5,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי, פרזנטורית דיגיטלית וסאונד",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/nativ-system-presentation.mp4",
+      "previewUrl": "/videos/nativ-system-presentation.mp4",
+      "posterUrl": "/thumbnails/nativ-system-presentation.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'גרסת קצב מהירה.',
-    idea: 'דגש על מעברים מהירים ותנועה.',
-    shortDescription: 'גרסה אלטרנטיבית לפרויקט נתיב.',
-    processSteps: [],
-    productionStats: {},
-    credits: {
-      director: 'אמיתי כהן'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרטון תדמית והדרכה להטמעת מערכת נתיב ברכבת ישראל.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    techStack: ['AI Video'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:11.522Z",
+    "updatedAt": "2026-09-01T10:33:11.522Z"
   },
   {
-    id: 'proj-film-1',
-    slug: 'film-1',
-    title: 'הפקה קולנועית 01',
-    subtitle: 'סרט קונספט מקורי',
-    client: 'AmitAI Studio',
-    year: '2026',
-    category: 'Experimental',
-    workType: 'concept_work',
-    status: 'published',
-    featured: false,
-    homepageOrder: 6,
-    projectType: 'סרט קונספט',
-    role: 'בימוי וקריאייטיב',
-    
-    video: {
-      provider: 'direct',
-      masterUrl: '/videos/film-1.mp4',
-      previewUrl: '/videos/film-1.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=85',
-      aspectRatio: '16:9',
-      duration: '01:00'
+    "id": "proj-nativ-railway",
+    "slug": "nativ-railway",
+    "title": "רכבת ישראל — מערכת נתיב (דיווח וקידמת)",
+    "subtitle": "רכבת ישראל",
+    "client": "רכבת ישראל",
+    "year": "2026",
+    "category": "Education",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 6,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי ועיצוב תנועה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/nativ-railway.mp4",
+      "previewUrl": "/videos/nativ-railway.mp4",
+      "posterUrl": "/thumbnails/nativ-railway.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
     },
-    
-    challenge: 'בדיקת גבולות תנועה וקומפוזיציה.',
-    idea: 'שילוב סביבות עתידניות.',
-    shortDescription: 'סרטון קונספט ניסיוני.',
-    processSteps: [],
-    productionStats: {},
-    credits: {
-      director: 'אמיתי כהן'
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרטון הסבר ייעודי למערכת נתיב — הקמת, דיווח, קידמת!",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
     },
-    techStack: ['Midjourney', 'Runway'],
-    gallery: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:11.668Z",
+    "updatedAt": "2026-09-01T10:33:11.668Z"
+  },
+  {
+    "id": "proj-nativ-desk",
+    "slug": "nativ-desk",
+    "title": "נתיב — מבט מלמעלה וחדר בקרה",
+    "subtitle": "נתיב",
+    "client": "נתיב",
+    "year": "2026",
+    "category": "Product",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 7,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי ויזואלי",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/nativ-desk.mp4",
+      "previewUrl": "/videos/nativ-desk.mp4",
+      "posterUrl": "/thumbnails/nativ-desk.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "הדמיות שולחן עבודה וניהול תהליכים מודרני.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:11.857Z",
+    "updatedAt": "2026-09-01T10:33:11.857Z"
+  },
+  {
+    "id": "proj-shomer-al-atzmi-kesher",
+    "slug": "shomer-al-atzmi-kesher",
+    "title": "כיתות ח׳ — שומר על עצמי בקש״ר",
+    "subtitle": "חינוך ומודעות דיגיטלית",
+    "client": "חינוך ומודעות דיגיטלית",
+    "year": "2026",
+    "category": "Education",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 8,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי והפקה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/shomer-al-atzmi-kesher.mp4",
+      "previewUrl": "/videos/shomer-al-atzmi-kesher.mp4",
+      "posterUrl": "/thumbnails/shomer-al-atzmi-kesher.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרטון הדרכה והעלאת מודעות לבטיחות ברשתות החברתיות לנוער.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:12.067Z",
+    "updatedAt": "2026-09-01T10:33:12.067Z"
+  },
+  {
+    "id": "proj-podcast-studio-v5",
+    "slug": "podcast-studio-v5",
+    "title": "פודקאסט וידאו — דיון באולפן",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Commercial",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 9,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי ויזואלי וסאונד",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/podcast-studio-v5.mp4",
+      "previewUrl": "/videos/podcast-studio-v5.mp4",
+      "posterUrl": "/thumbnails/podcast-studio-v5.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "הפקה ועריכה ויזואלית לאולפן פודקאסט מבוסס AI.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:12.378Z",
+    "updatedAt": "2026-09-01T10:33:12.378Z"
+  },
+  {
+    "id": "proj-coastal-sunset-drone",
+    "slug": "coastal-sunset-drone",
+    "title": "שקיעה בחוף הים — צילום אוויר קולנועי",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Experimental",
+    "workType": "concept_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 10,
+    "projectType": "סרט AI קולנועי",
+    "role": "Worldbuilding & Lighting",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/coastal-sunset-drone.mp4",
+      "previewUrl": "/videos/coastal-sunset-drone.mp4",
+      "posterUrl": "/thumbnails/coastal-sunset-drone.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "הדמיית שקיעה חופית, ארכיטקטורה עתידנית ורחפן קולנועי.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:12.685Z",
+    "updatedAt": "2026-09-01T10:33:12.685Z"
+  },
+  {
+    "id": "proj-dont-stay-alone",
+    "slug": "dont-stay-alone",
+    "title": "לא להישאר לבד — מודעות חברתית",
+    "subtitle": "קהילה ומודעות",
+    "client": "קהילה ומודעות",
+    "year": "2026",
+    "category": "Storytelling",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 11,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי רגשי וסטוריטלינג",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/dont-stay-alone.mp4",
+      "previewUrl": "/videos/dont-stay-alone.mp4",
+      "posterUrl": "/thumbnails/dont-stay-alone.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרטון מרגש על תמיכה הדדית, חברות ומניעת בדידות בקרב בני נוער.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:12.860Z",
+    "updatedAt": "2026-09-01T10:33:12.860Z"
+  },
+  {
+    "id": "proj-la-tabqou-wahdakum-1",
+    "slug": "la-tabqou-wahdakum-1",
+    "title": "لا تبقوا وحدكم — لا תישאר לבד (חלק 1)",
+    "subtitle": "Social Impact",
+    "client": "Social Impact",
+    "year": "2026",
+    "category": "Storytelling",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 12,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי והפקת סרט AI",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/la-tabqou-wahdakum-1.mp4",
+      "previewUrl": "/videos/la-tabqou-wahdakum-1.mp4",
+      "posterUrl": "/thumbnails/la-tabqou-wahdakum-1.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סרטון דרמטי קצר על התמודדות רגשית ותמיכה חברתית.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:13.032Z",
+    "updatedAt": "2026-09-01T10:33:13.032Z"
+  },
+  {
+    "id": "proj-la-tabqou-wahdakum-2",
+    "slug": "la-tabqou-wahdakum-2",
+    "title": "لا تبقوا وحدكم — חלק 2",
+    "subtitle": "Social Impact",
+    "client": "Social Impact",
+    "year": "2026",
+    "category": "Storytelling",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 13,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי ועריכה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/la-tabqou-wahdakum-2.mp4",
+      "previewUrl": "/videos/la-tabqou-wahdakum-2.mp4",
+      "posterUrl": "/thumbnails/la-tabqou-wahdakum-2.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "המשך סדרת המודעות החברתית בשפה הערבית והעברית.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:13.214Z",
+    "updatedAt": "2026-09-01T10:33:13.214Z"
+  },
+  {
+    "id": "proj-campus-student-phone",
+    "slug": "campus-student-phone",
+    "title": "חיי קמפוס — דיאלוג דיגיטלי",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Social",
+    "workType": "concept_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 14,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי דמויות",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/campus-student-phone.mp4",
+      "previewUrl": "/videos/campus-student-phone.mp4",
+      "posterUrl": "/thumbnails/campus-student-phone.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סצנה קולנועית בקמפוס אוניברסיטאי עם שילוב שחקנים ואימון עקביות.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:13.611Z",
+    "updatedAt": "2026-09-01T10:33:13.611Z"
+  },
+  {
+    "id": "proj-campus-bench-group",
+    "slug": "campus-bench-group",
+    "title": "מפגש סטודנטים בקמפוס",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Social",
+    "workType": "concept_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 15,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי קבוצתי",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/campus-bench-group.mp4",
+      "previewUrl": "/videos/campus-bench-group.mp4",
+      "posterUrl": "/thumbnails/campus-bench-group.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "סצנת שטח פתוחה עם קבוצת סטודנטים בשעות בין הערביים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:13.863Z",
+    "updatedAt": "2026-09-01T10:33:13.863Z"
+  },
+  {
+    "id": "proj-school-backpack-boy",
+    "slug": "school-backpack-boy",
+    "title": "בדרך לבית הספר — צילומי שטח",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Education",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 16,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי ועריכה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/school-backpack-boy.mp4",
+      "previewUrl": "/videos/school-backpack-boy.mp4",
+      "posterUrl": "/thumbnails/school-backpack-boy.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "שוטים קולנועיים במרחב בית ספרי עם שחקנים דיגיטליים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:14.053Z",
+    "updatedAt": "2026-09-01T10:33:14.053Z"
+  },
+  {
+    "id": "proj-hallway-school-morning",
+    "slug": "hallway-school-morning",
+    "title": "בוקר במסדרונות בית הספר",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Education",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 17,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי תנועה",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/hallway-school-morning.mp4",
+      "previewUrl": "/videos/hallway-school-morning.mp4",
+      "posterUrl": "/thumbnails/hallway-school-morning.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "תנועת מצלמה רציפה לאורך מסדרון תוסס בפתיחת יום הלימודים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:14.257Z",
+    "updatedAt": "2026-09-01T10:33:14.257Z"
+  },
+  {
+    "id": "proj-fiber-optic-light-trail",
+    "slug": "fiber-optic-light-trail",
+    "title": "סיבים אופטיים וטלמטריה דיגיטלית",
+    "subtitle": "טכנולוגיה וסייבר",
+    "client": "טכנולוגיה וסייבר",
+    "year": "2026",
+    "category": "Experimental",
+    "workType": "concept_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 18,
+    "projectType": "סרט AI קולנועי",
+    "role": "VFX & Motion Design",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/fiber-optic-light-trail.mp4",
+      "previewUrl": "/videos/fiber-optic-light-trail.mp4",
+      "posterUrl": "/thumbnails/fiber-optic-light-trail.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "תנועת קרני אור דיגיטליות על גבי ריצוף עירוני ואפקטים גרפיים.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:14.458Z",
+    "updatedAt": "2026-09-01T10:33:14.458Z"
+  },
+  {
+    "id": "proj-outdoor-dialogue-friends",
+    "slug": "outdoor-dialogue-friends",
+    "title": "שיחה פתוחה בטבע",
+    "subtitle": "AmitAI Studio",
+    "client": "AmitAI Studio",
+    "year": "2026",
+    "category": "Storytelling",
+    "workType": "client_work",
+    "status": "published",
+    "featured": true,
+    "homepageOrder": 19,
+    "projectType": "סרט AI קולנועי",
+    "role": "בימוי וסאונד",
+    "video": {
+      "provider": "direct",
+      "masterUrl": "/videos/outdoor-dialogue-friends.mp4",
+      "previewUrl": "/videos/outdoor-dialogue-friends.mp4",
+      "posterUrl": "/thumbnails/outdoor-dialogue-friends.jpg",
+      "aspectRatio": "16:9",
+      "duration": "01:00"
+    },
+    "challenge": "",
+    "idea": "",
+    "shortDescription": "דיאלוג טבעי בין שתי נערות בשטח פתוח עם תאורת שקיעה חמה.",
+    "processSteps": [],
+    "productionStats": {},
+    "credits": {
+      "director": "אמיתי כהן (AmitAI)",
+      "aiFilm": "AmitAI Studio"
+    },
+    "techStack": [
+      "AI Generative Cinema",
+      "DaVinci Resolve"
+    ],
+    "gallery": [],
+    "createdAt": "2026-09-01T10:33:14.660Z",
+    "updatedAt": "2026-09-01T10:33:14.660Z"
   }
 ];

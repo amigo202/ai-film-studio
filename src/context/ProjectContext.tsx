@@ -30,7 +30,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const DB_STORAGE_KEY = 'ai_film_studio_projects_v5';
+const DB_STORAGE_KEY = 'ai_film_studio_projects_v6';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
