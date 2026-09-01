@@ -81,15 +81,20 @@ export const AboutPage: React.FC = () => {
             <div className="relative aspect-widescreen rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black">
               <img
                 src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80"
-                alt="Studio Visual Development"
+                alt="AmitAI Visual Development"
                 className="w-full h-full object-cover brightness-75"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-8">
                 <div>
-                  <span className="text-xs font-mono text-amber-400 uppercase">DIRECTOR'S FRAME</span>
-                  <h4 className="text-lg font-syne font-bold uppercase text-white mt-1">
-                    Visual Craft & Emotional Resonance
+                  <span className="text-xs font-mono text-amber-400 uppercase tracking-widest block mb-1">
+                    DIRECTOR & FOUNDER
+                  </span>
+                  <h4 className="text-xl font-syne font-bold uppercase text-white">
+                    AmitAI · אמיתי כהן
                   </h4>
+                  <p className="text-xs text-zinc-300 font-hebrew mt-2 leading-relaxed">
+                    במאי, סטוריטלר ויוצר קולנוע מבוסס AI. מתמחה בבניית עולמות, בימוי מדויק ואימוני עקביות (LoRA) להפקות מסחריות ועלילתיות.
+                  </p>
                 </div>
               </div>
             </div>

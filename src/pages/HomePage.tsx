@@ -227,13 +227,13 @@ export const HomePage: React.FC = () => {
 
             <div className="flex flex-wrap items-center justify-center gap-4">
               <a
-                href="https://wa.me/972500000000"
+                href="https://wa.me/972526016115?text=היי%20אמיתי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-syne font-bold uppercase tracking-wider text-sm transition-all"
+                className="flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-syne font-bold uppercase tracking-wider text-sm transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>WhatsApp ישיר</span>
+                <span>WhatsApp: 052-6016115</span>
               </a>
 
               <Link

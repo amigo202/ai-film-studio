@@ -50,11 +50,11 @@ export const Navbar: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <span className="font-syne text-base md:text-lg font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
-              AI FILM STUDIO
+              AmitAI
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
             </span>
             <span className="text-[10px] tracking-widest text-zinc-400 uppercase font-mono">
-              Creative & Production
+              AMITAY COHEN · FILM & CREATIVE
             </span>
           </div>
         </Link>

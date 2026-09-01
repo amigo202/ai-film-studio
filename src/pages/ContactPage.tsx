@@ -71,7 +71,7 @@ export const ContactPage: React.FC = () => {
 
               {/* WhatsApp Fast CTA */}
               <a
-                href="https://wa.me/972500000000?text=היי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
+                href="https://wa.me/972526016115?text=היי%20אמיתי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center justify-between p-6 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/60 transition-all text-right"
@@ -85,7 +85,7 @@ export const ContactPage: React.FC = () => {
                       הכי מהיר
                     </span>
                     <h4 className="font-syne font-bold text-white text-lg">WhatsApp ישיר</h4>
-                    <p className="text-xs text-zinc-400 font-hebrew">שיחה מיידית עם הבמאי</p>
+                    <p className="text-xs text-zinc-400 font-hebrew">שיחה ישירה עם אמיתי כהן (052-6016115)</p>
                   </div>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-emerald-400 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -113,7 +113,7 @@ export const ContactPage: React.FC = () => {
 
               {/* Phone */}
               <a
-                href="tel:+972500000000"
+                href="tel:0526016115"
                 className="group flex items-center justify-between p-6 rounded-xl bg-[#121216] hover:bg-white/5 border border-white/5 hover:border-white/15 transition-all text-right"
               >
                 <div className="flex items-center gap-4">
@@ -124,8 +124,8 @@ export const ContactPage: React.FC = () => {
                     <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 block">
                       PHONE
                     </span>
-                    <h4 className="font-syne font-bold text-white text-base">+972-50-000-0000</h4>
-                    <p className="text-xs text-zinc-400 font-hebrew">ימים א'-ה' 09:00 - 19:00</p>
+                    <h4 className="font-syne font-bold text-white text-base">052-6016115</h4>
+                    <p className="text-xs text-zinc-400 font-hebrew">אמיתי כהן (AMITAY COHEN)</p>
                   </div>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
@@ -133,7 +133,7 @@ export const ContactPage: React.FC = () => {
             </div>
 
             <div className="p-6 rounded-xl bg-black/40 border border-white/5 text-xs text-zinc-400 font-mono">
-              <span className="text-amber-400 block mb-1">STUDIO LOCATION</span>
+              <span className="text-amber-400 block mb-1">AmitAI · AMITAY COHEN</span>
               <span>TEL AVIV · REMOTE CLIENTS WORLDWIDE</span>
             </div>
           </div>
