@@ -30,7 +30,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const DB_STORAGE_KEY = 'ai_film_studio_projects_db';
+const DB_STORAGE_KEY = 'ai_film_studio_projects_v5';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -49,7 +49,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             .order('homepage_order', { ascending: true });
             
           if (!error && data && data.length > 0) {
-            // Map Supabase rows to Project interface
             const formatted: Project[] = data.map((row: any) => ({
               id: row.id,
               slug: row.slug,
@@ -90,7 +89,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
           // Dev local mock storage
           const localSaved = localStorage.getItem(DB_STORAGE_KEY);
           if (localSaved) {
-            setProjects(JSON.parse(localSaved));
+            const parsed = JSON.parse(localSaved);
+            // If parsed has projects, merge or use them
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setProjects(parsed);
+            } else {
+              setProjects(SHOWCASE_PROJECTS);
+              localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+            }
           } else {
             setProjects(SHOWCASE_PROJECTS);
             localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
@@ -138,16 +144,15 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const now = new Date().toISOString();
     const newProject: Project = {
       ...projectData,
-      id: `proj-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      id: `proj-${Date.now()}`,
       createdAt: now,
       updatedAt: now
     };
 
     if (isSupabaseConfigured) {
-      const { error } = await supabase.from('projects').insert([{
-        id: newProject.id,
-        slug: newProject.slug,
+      const { data, error } = await supabase.from('projects').insert({
         title: newProject.title,
+        slug: newProject.slug,
         subtitle: newProject.subtitle,
         client: newProject.client,
         year: newProject.year,
@@ -172,11 +177,11 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         gallery: newProject.gallery,
         seo_title: newProject.seoTitle,
         seo_description: newProject.seoDescription,
-        og_image_url: newProject.ogImageUrl,
-      }]).select().single();
+        og_image_url: newProject.ogImageUrl
+      }).select().single();
 
-      if (error) {
-        console.error('Supabase insert error:', error);
+      if (!error && data) {
+        newProject.id = data.id;
       }
     }
 
@@ -186,20 +191,22 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return newProject;
   };
 
-  const updateProject = async (id: string, projectUpdates: Partial<Project>): Promise<Project> => {
-    const existing = projects.find((p) => p.id === id);
-    if (!existing) throw new Error('Project not found');
+  const updateProject = async (id: string, projectData: Partial<Project>): Promise<Project> => {
+    const existingIndex = projects.findIndex((p) => p.id === id);
+    if (existingIndex === -1) {
+      throw new Error(`Project with ID ${id} not found`);
+    }
 
     const updatedProject: Project = {
-      ...existing,
-      ...projectUpdates,
+      ...projects[existingIndex],
+      ...projectData,
       updatedAt: new Date().toISOString()
     };
 
     if (isSupabaseConfigured) {
       await supabase.from('projects').update({
-        slug: updatedProject.slug,
         title: updatedProject.title,
+        slug: updatedProject.slug,
         subtitle: updatedProject.subtitle,
         client: updatedProject.client,
         year: updatedProject.year,
@@ -224,12 +231,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         gallery: updatedProject.gallery,
         seo_title: updatedProject.seoTitle,
         seo_description: updatedProject.seoDescription,
-        og_image_url: updatedProject.ogImageUrl,
-        updated_at: updatedProject.updatedAt
+        og_image_url: updatedProject.ogImageUrl
       }).eq('id', id);
     }
 
-    const updated = projects.map((p) => (p.id === id ? updatedProject : p));
+    const updated = [...projects];
+    updated[existingIndex] = updatedProject;
     saveToPersistence(updated);
     return updatedProject;
   };
@@ -243,40 +250,38 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const toggleFeatured = async (id: string): Promise<void> => {
-    const proj = projects.find((p) => p.id === id);
-    if (!proj) return;
-    await updateProject(id, { featured: !proj.featured });
+    const p = projects.find((item) => item.id === id);
+    if (p) {
+      await updateProject(id, { featured: !p.featured });
+    }
   };
 
   const reorderProjects = async (orderedIds: string[]): Promise<void> => {
     const updated = [...projects].sort((a, b) => {
-      const idxA = orderedIds.indexOf(a.id);
-      const idxB = orderedIds.indexOf(b.id);
-      return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
-    }).map((p, idx) => ({ ...p, homepageOrder: idx + 1 }));
+      const indexA = orderedIds.indexOf(a.id);
+      const indexB = orderedIds.indexOf(b.id);
+      return indexA - indexB;
+    }).map((item, index) => ({
+      ...item,
+      homepageOrder: index + 1
+    }));
 
     saveToPersistence(updated);
   };
 
-  // Autosave Draft in CMS Builder
   const saveDraft = (draft: Partial<Project>) => {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   };
 
   const getDraft = (): Partial<Project> | null => {
-    try {
-      const saved = localStorage.getItem(DRAFT_KEY);
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
+    const saved = localStorage.getItem(DRAFT_KEY);
+    return saved ? JSON.parse(saved) : null;
   };
 
   const clearDraft = () => {
     localStorage.removeItem(DRAFT_KEY);
   };
 
-  // Submit Inquiry (Brief from Client)
   const submitInquiry = async (inquiryData: Omit<ContactInquiry, 'id' | 'createdAt' | 'status'>) => {
     const newInquiry: ContactInquiry = {
       ...inquiryData,
@@ -286,8 +291,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     if (isSupabaseConfigured) {
-      await supabase.from('contact_inquiries').insert([{
-        id: newInquiry.id,
+      await supabase.from('contact_inquiries').insert({
         name: newInquiry.name,
         email: newInquiry.email,
         company: newInquiry.company,
@@ -295,16 +299,19 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         project_type: newInquiry.projectType,
         budget_range: newInquiry.budgetRange,
         timeline: newInquiry.timeline,
-        brief: newInquiry.brief,
-      }]);
+        brief: newInquiry.brief
+      });
     }
 
     const updated = [newInquiry, ...inquiries];
     setInquiries(updated);
-    localStorage.setItem(INQUIRIES_KEY, JSON.stringify(updated));
+    if (!isSupabaseConfigured) {
+      localStorage.setItem(INQUIRIES_KEY, JSON.stringify(updated));
+    }
   };
 
   const resetToDefaultProjects = () => {
+    localStorage.removeItem(DB_STORAGE_KEY);
     setProjects(SHOWCASE_PROJECTS);
     localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
   };

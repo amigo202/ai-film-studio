@@ -195,8 +195,11 @@ export const VideoPreviewCard: React.FC<VideoPreviewCardProps> = ({
       >
         {/* Tier 1: Static Poster */}
         <img
-          src={project.video.posterUrl}
+          src={project.video.posterUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80'}
           alt={project.title}
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80';
+          }}
           className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${
             isVideoLoaded && shouldPlayPreview ? 'opacity-0' : 'opacity-100'
           }`}
