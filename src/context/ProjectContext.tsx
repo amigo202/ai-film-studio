@@ -30,8 +30,21 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const PERMANENT_STORAGE_KEY = 'ai_film_studio_persistent_projects_v1';
+const PERMANENT_STORAGE_KEY = 'ai_film_studio_persistent_projects_v2';
+const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_ids';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
+
+// Old mock template slugs that should never be resurrected
+const DEMO_PROJECT_SLUGS = new Set([
+  'aethelgard',
+  'yiftach',
+  'maison-nocturne',
+  'cbc-ramadan',
+  'proj-aethelgard',
+  'proj-yiftach',
+  'proj-maison-nocturne',
+  'proj-cbc-ramadan'
+]);
 
 const LEGACY_STORAGE_KEYS = [
   'ai_film_studio_projects_db',
@@ -41,7 +54,8 @@ const LEGACY_STORAGE_KEYS = [
   'ai_film_studio_projects_v5',
   'ai_film_studio_projects_v6',
   'ai_film_studio_projects_v7',
-  'ai_film_studio_persistent_projects_v1'
+  'ai_film_studio_persistent_projects_v1',
+  'ai_film_studio_persistent_projects_v2'
 ];
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -49,7 +63,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load and merge Projects on startup preserving all user edits across any version
+  // Load and merge Projects on startup
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -97,7 +111,22 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Scan all legacy and current storage keys to recover user edits
+          // Read set of deleted project IDs/slugs
+          let deletedIds = new Set<string>();
+          try {
+            const rawDeleted = localStorage.getItem(DELETED_STORAGE_KEY);
+            if (rawDeleted) {
+              const parsed = JSON.parse(rawDeleted);
+              if (Array.isArray(parsed)) {
+                parsed.forEach((id: string) => deletedIds.add(id));
+              }
+            }
+          } catch (e) {}
+
+          // Also auto-add demo projects to deletedIds
+          DEMO_PROJECT_SLUGS.forEach((slug) => deletedIds.add(slug));
+
+          // Scan legacy and current storage keys to recover user edits
           const userCustomMap: Record<string, Partial<Project>> = {};
           
           for (const key of LEGACY_STORAGE_KEYS) {
@@ -108,7 +137,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 if (Array.isArray(parsed)) {
                   parsed.forEach((p: Project) => {
                     if (p && (p.id || p.slug)) {
-                      // Match by ID or Slug or Master Video URL
+                      // Skip demo projects
+                      if (DEMO_PROJECT_SLUGS.has(p.slug) || DEMO_PROJECT_SLUGS.has(p.id)) {
+                        return;
+                      }
+                      // Skip explicitly deleted projects
+                      if (deletedIds.has(p.id) || deletedIds.has(p.slug)) {
+                        return;
+                      }
                       if (p.id) userCustomMap[p.id] = p;
                       if (p.slug) userCustomMap[p.slug] = p;
                       if (p.video?.masterUrl) userCustomMap[p.video.masterUrl] = p;
@@ -121,8 +157,13 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             }
           }
 
-          // Merge SHOWCASE_PROJECTS with userCustomMap (User edits always take precedence!)
-          const merged: Project[] = SHOWCASE_PROJECTS.map((base) => {
+          // Filter SHOWCASE_PROJECTS: remove demo projects and deleted projects
+          const filteredBase = SHOWCASE_PROJECTS.filter(
+            (base) => !DEMO_PROJECT_SLUGS.has(base.slug) && !DEMO_PROJECT_SLUGS.has(base.id) && !deletedIds.has(base.id) && !deletedIds.has(base.slug)
+          );
+
+          // Merge base projects with userCustomMap (User edits always take precedence!)
+          const merged: Project[] = filteredBase.map((base) => {
             const saved = userCustomMap[base.id] || userCustomMap[base.slug] || (base.video?.masterUrl ? userCustomMap[base.video.masterUrl] : undefined);
             if (saved) {
               return {
@@ -138,9 +179,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             return base;
           });
 
-          // Add any custom projects the user created that are not in SHOWCASE_PROJECTS
+          // Add any custom projects the user created that are not in filteredBase
           Object.values(userCustomMap).forEach((custom: any) => {
             if (custom && custom.id && custom.title) {
+              if (DEMO_PROJECT_SLUGS.has(custom.slug) || DEMO_PROJECT_SLUGS.has(custom.id) || deletedIds.has(custom.id) || deletedIds.has(custom.slug)) {
+                return;
+              }
               const alreadyExists = merged.some(
                 (p) => p.id === custom.id || p.slug === custom.slug || (p.video?.masterUrl && p.video.masterUrl === custom.video?.masterUrl)
               );
@@ -152,6 +196,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
           setProjects(merged);
           localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(merged));
+          localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify(Array.from(deletedIds)));
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
@@ -160,7 +205,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }
       } catch (err) {
         console.error('Error fetching projects:', err);
-        setProjects(SHOWCASE_PROJECTS);
+        setProjects(SHOWCASE_PROJECTS.filter((b) => !DEMO_PROJECT_SLUGS.has(b.slug)));
       } finally {
         setLoading(false);
       }
@@ -173,8 +218,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProjects(updated);
     if (!isSupabaseConfigured) {
       localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(updated));
-      // Also update latest legacy key for backwards compatibility
-      localStorage.setItem('ai_film_studio_projects_v7', JSON.stringify(updated));
     }
   };
 
@@ -295,9 +338,25 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteProject = async (id: string): Promise<void> => {
+    const projectToDelete = projects.find((p) => p.id === id);
+    
+    // Add to deleted IDs set in localStorage
+    try {
+      let deletedIds: string[] = [];
+      const raw = localStorage.getItem(DELETED_STORAGE_KEY);
+      if (raw) {
+        deletedIds = JSON.parse(raw);
+      }
+      deletedIds.push(id);
+      if (projectToDelete?.slug) deletedIds.push(projectToDelete.slug);
+      if (projectToDelete?.video?.masterUrl) deletedIds.push(projectToDelete.video.masterUrl);
+      localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify(deletedIds));
+    } catch (e) {}
+
     if (isSupabaseConfigured) {
       await supabase.from('projects').delete().eq('id', id);
     }
+
     const updated = projects.filter((p) => p.id !== id);
     saveToPersistence(updated);
   };
@@ -365,6 +424,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const resetToDefaultProjects = () => {
     localStorage.removeItem(PERMANENT_STORAGE_KEY);
+    localStorage.removeItem(DELETED_STORAGE_KEY);
     setProjects(SHOWCASE_PROJECTS);
     localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
   };
