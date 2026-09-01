@@ -30,15 +30,26 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const DB_STORAGE_KEY = 'ai_film_studio_projects_v7';
+const PERMANENT_STORAGE_KEY = 'ai_film_studio_persistent_projects_v1';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
+
+const LEGACY_STORAGE_KEYS = [
+  'ai_film_studio_projects_db',
+  'ai_film_studio_projects_v2',
+  'ai_film_studio_projects_v3',
+  'ai_film_studio_projects_v4',
+  'ai_film_studio_projects_v5',
+  'ai_film_studio_projects_v6',
+  'ai_film_studio_projects_v7',
+  'ai_film_studio_persistent_projects_v1'
+];
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(SHOWCASE_PROJECTS);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load Projects on startup
+  // Load and merge Projects on startup preserving all user edits across any version
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -86,21 +97,61 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Dev local mock storage
-          const localSaved = localStorage.getItem(DB_STORAGE_KEY);
-          if (localSaved) {
-            const parsed = JSON.parse(localSaved);
-            // If parsed has projects, merge or use them
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setProjects(parsed);
-            } else {
-              setProjects(SHOWCASE_PROJECTS);
-              localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+          // Scan all legacy and current storage keys to recover user edits
+          const userCustomMap: Record<string, Partial<Project>> = {};
+          
+          for (const key of LEGACY_STORAGE_KEYS) {
+            const raw = localStorage.getItem(key);
+            if (raw) {
+              try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                  parsed.forEach((p: Project) => {
+                    if (p && (p.id || p.slug)) {
+                      // Match by ID or Slug or Master Video URL
+                      if (p.id) userCustomMap[p.id] = p;
+                      if (p.slug) userCustomMap[p.slug] = p;
+                      if (p.video?.masterUrl) userCustomMap[p.video.masterUrl] = p;
+                    }
+                  });
+                }
+              } catch (e) {
+                // Ignore parse errors
+              }
             }
-          } else {
-            setProjects(SHOWCASE_PROJECTS);
-            localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
           }
+
+          // Merge SHOWCASE_PROJECTS with userCustomMap (User edits always take precedence!)
+          const merged: Project[] = SHOWCASE_PROJECTS.map((base) => {
+            const saved = userCustomMap[base.id] || userCustomMap[base.slug] || (base.video?.masterUrl ? userCustomMap[base.video.masterUrl] : undefined);
+            if (saved) {
+              return {
+                ...base,
+                title: saved.title || base.title,
+                shortDescription: saved.shortDescription || base.shortDescription,
+                video: {
+                  ...base.video,
+                  ...(saved.video || {})
+                }
+              };
+            }
+            return base;
+          });
+
+          // Add any custom projects the user created that are not in SHOWCASE_PROJECTS
+          Object.values(userCustomMap).forEach((custom: any) => {
+            if (custom && custom.id && custom.title) {
+              const alreadyExists = merged.some(
+                (p) => p.id === custom.id || p.slug === custom.slug || (p.video?.masterUrl && p.video.masterUrl === custom.video?.masterUrl)
+              );
+              if (!alreadyExists) {
+                merged.push(custom);
+              }
+            }
+          });
+
+          setProjects(merged);
+          localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(merged));
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
@@ -121,7 +172,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const saveToPersistence = (updated: Project[]) => {
     setProjects(updated);
     if (!isSupabaseConfigured) {
-      localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(updated));
+      // Also update latest legacy key for backwards compatibility
+      localStorage.setItem('ai_film_studio_projects_v7', JSON.stringify(updated));
     }
   };
 
@@ -166,12 +219,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         role: newProject.role,
         challenge: newProject.challenge,
         idea: newProject.idea,
-        concept_art_url: newProject.conceptArtUrl,
+        conceptArtUrl: newProject.conceptArtUrl,
         short_description: newProject.shortDescription,
         full_description: newProject.fullDescription,
         process_steps: newProject.processSteps,
         frame_breakdown: newProject.frameBreakdown,
-        production_stats: newProject.productionStats,
+        productionStats: newProject.productionStats,
         credits: newProject.credits,
         tech_stack: newProject.techStack,
         gallery: newProject.gallery,
@@ -220,12 +273,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         role: updatedProject.role,
         challenge: updatedProject.challenge,
         idea: updatedProject.idea,
-        concept_art_url: updatedProject.conceptArtUrl,
+        conceptArtUrl: updatedProject.conceptArtUrl,
         short_description: updatedProject.shortDescription,
         full_description: updatedProject.fullDescription,
         process_steps: updatedProject.processSteps,
         frame_breakdown: updatedProject.frameBreakdown,
-        production_stats: updatedProject.productionStats,
+        productionStats: updatedProject.productionStats,
         credits: updatedProject.credits,
         tech_stack: updatedProject.techStack,
         gallery: updatedProject.gallery,
@@ -311,9 +364,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const resetToDefaultProjects = () => {
-    localStorage.removeItem(DB_STORAGE_KEY);
+    localStorage.removeItem(PERMANENT_STORAGE_KEY);
     setProjects(SHOWCASE_PROJECTS);
-    localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+    localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
   };
 
   return (
