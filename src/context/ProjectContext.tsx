@@ -23,30 +23,19 @@ interface ProjectContextType {
   submitInquiry: (inquiry: Omit<ContactInquiry, 'id' | 'createdAt' | 'status'>) => Promise<void>;
   inquiries: ContactInquiry[];
   
-  // Reset demo data
+  // Reset / Resync
   resetToDefaultProjects: () => void;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const PERMANENT_STORAGE_KEY = 'ai_film_studio_persistent_projects_v2';
-const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_ids';
+const ACTIVE_STORAGE_KEY = 'ai_film_studio_persistent_projects_v3';
+const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_v3';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
-// Old mock template slugs that should never be resurrected
-const DEMO_PROJECT_SLUGS = new Set([
-  'aethelgard',
-  'yiftach',
-  'maison-nocturne',
-  'cbc-ramadan',
-  'proj-aethelgard',
-  'proj-yiftach',
-  'proj-maison-nocturne',
-  'proj-cbc-ramadan'
-]);
-
-const LEGACY_STORAGE_KEYS = [
+// Old mock template slugs and old storage keys to purge
+const OLD_LEGACY_KEYS = [
   'ai_film_studio_projects_db',
   'ai_film_studio_projects_v2',
   'ai_film_studio_projects_v3',
@@ -111,7 +100,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Read set of deleted project IDs/slugs
+          // 1. Purge old stale legacy keys that may pollute mobile devices
+          OLD_LEGACY_KEYS.forEach((key) => {
+            try {
+              localStorage.removeItem(key);
+            } catch (e) {}
+          });
+
+          // 2. Read deleted project IDs
           let deletedIds = new Set<string>();
           try {
             const rawDeleted = localStorage.getItem(DELETED_STORAGE_KEY);
@@ -123,80 +119,32 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             }
           } catch (e) {}
 
-          // Also auto-add demo projects to deletedIds
-          DEMO_PROJECT_SLUGS.forEach((slug) => deletedIds.add(slug));
-
-          // Scan legacy and current storage keys to recover user edits
-          const userCustomMap: Record<string, Partial<Project>> = {};
-          
-          for (const key of LEGACY_STORAGE_KEYS) {
-            const raw = localStorage.getItem(key);
-            if (raw) {
-              try {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed)) {
-                  parsed.forEach((p: Project) => {
-                    if (p && (p.id || p.slug)) {
-                      // Skip demo projects
-                      if (DEMO_PROJECT_SLUGS.has(p.slug) || DEMO_PROJECT_SLUGS.has(p.id)) {
-                        return;
-                      }
-                      // Skip explicitly deleted projects
-                      if (deletedIds.has(p.id) || deletedIds.has(p.slug)) {
-                        return;
-                      }
-                      if (p.id) userCustomMap[p.id] = p;
-                      if (p.slug) userCustomMap[p.slug] = p;
-                      if (p.video?.masterUrl) userCustomMap[p.video.masterUrl] = p;
-                    }
-                  });
-                }
-              } catch (e) {
-                // Ignore parse errors
+          // 3. Read active user edits from ACTIVE_STORAGE_KEY
+          const activeSaved = localStorage.getItem(ACTIVE_STORAGE_KEY);
+          let userSavedProjects: Project[] = [];
+          if (activeSaved) {
+            try {
+              const parsed = JSON.parse(activeSaved);
+              if (Array.isArray(parsed)) {
+                userSavedProjects = parsed;
               }
-            }
+            } catch (e) {}
           }
 
-          // Filter SHOWCASE_PROJECTS: remove demo projects and deleted projects
-          const filteredBase = SHOWCASE_PROJECTS.filter(
-            (base) => !DEMO_PROJECT_SLUGS.has(base.slug) && !DEMO_PROJECT_SLUGS.has(base.id) && !deletedIds.has(base.id) && !deletedIds.has(base.slug)
-          );
-
-          // Merge base projects with userCustomMap (User edits always take precedence!)
-          const merged: Project[] = filteredBase.map((base) => {
-            const saved = userCustomMap[base.id] || userCustomMap[base.slug] || (base.video?.masterUrl ? userCustomMap[base.video.masterUrl] : undefined);
-            if (saved) {
-              return {
-                ...base,
-                title: saved.title || base.title,
-                shortDescription: saved.shortDescription || base.shortDescription,
-                video: {
-                  ...base.video,
-                  ...(saved.video || {})
-                }
-              };
-            }
-            return base;
-          });
-
-          // Add any custom projects the user created that are not in filteredBase
-          Object.values(userCustomMap).forEach((custom: any) => {
-            if (custom && custom.id && custom.title) {
-              if (DEMO_PROJECT_SLUGS.has(custom.slug) || DEMO_PROJECT_SLUGS.has(custom.id) || deletedIds.has(custom.id) || deletedIds.has(custom.slug)) {
-                return;
-              }
-              const alreadyExists = merged.some(
-                (p) => p.id === custom.id || p.slug === custom.slug || (p.video?.masterUrl && p.video.masterUrl === custom.video?.masterUrl)
-              );
-              if (!alreadyExists) {
-                merged.push(custom);
-              }
-            }
-          });
-
-          setProjects(merged);
-          localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(merged));
-          localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify(Array.from(deletedIds)));
+          if (userSavedProjects.length > 0) {
+            // Apply deleted filter
+            const filtered = userSavedProjects.filter(
+              (p) => !deletedIds.has(p.id) && !deletedIds.has(p.slug)
+            );
+            setProjects(filtered);
+          } else {
+            // Fresh authoritative list from code
+            const fresh = SHOWCASE_PROJECTS.filter(
+              (p) => !deletedIds.has(p.id) && !deletedIds.has(p.slug)
+            );
+            setProjects(fresh);
+            localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(fresh));
+          }
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
@@ -205,7 +153,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }
       } catch (err) {
         console.error('Error fetching projects:', err);
-        setProjects(SHOWCASE_PROJECTS.filter((b) => !DEMO_PROJECT_SLUGS.has(b.slug)));
+        setProjects(SHOWCASE_PROJECTS);
       } finally {
         setLoading(false);
       }
@@ -217,7 +165,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const saveToPersistence = (updated: Project[]) => {
     setProjects(updated);
     if (!isSupabaseConfigured) {
-      localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(updated));
     }
   };
 
@@ -340,7 +288,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteProject = async (id: string): Promise<void> => {
     const projectToDelete = projects.find((p) => p.id === id);
     
-    // Add to deleted IDs set in localStorage
+    // Add to deleted IDs in localStorage
     try {
       let deletedIds: string[] = [];
       const raw = localStorage.getItem(DELETED_STORAGE_KEY);
@@ -423,10 +371,10 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const resetToDefaultProjects = () => {
-    localStorage.removeItem(PERMANENT_STORAGE_KEY);
+    localStorage.removeItem(ACTIVE_STORAGE_KEY);
     localStorage.removeItem(DELETED_STORAGE_KEY);
     setProjects(SHOWCASE_PROJECTS);
-    localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+    localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
   };
 
   return (
