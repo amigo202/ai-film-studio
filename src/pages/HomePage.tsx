@@ -8,6 +8,8 @@ import { StudioLayout } from '../components/layout/StudioLayout';
 export const HomePage: React.FC = () => {
   const { projects } = useProjects();
   const [heroVideoReady, setHeroVideoReady] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
@@ -19,6 +21,26 @@ export const HomePage: React.FC = () => {
       });
     }
   }, []);
+
+  const toggleSound = () => {
+    if (heroVideoRef.current) {
+      const nextMuted = !isMuted;
+      heroVideoRef.current.muted = nextMuted;
+      setIsMuted(nextMuted);
+    }
+  };
+
+  const togglePlayPause = () => {
+    if (heroVideoRef.current) {
+      if (isPlaying) {
+        heroVideoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        heroVideoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
 
   const scrollToWork = () => {
     const el = document.getElementById('film-gallery');
@@ -35,21 +57,24 @@ export const HomePage: React.FC = () => {
         <div className="absolute inset-0 z-0">
           {/* Static Hero Poster (Tier 1: Instant load) */}
           <img
-            src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=2000&q=85"
-            alt="AmitAI Film Studio Hero"
+            src="/thumbnails/cbc-power-train.jpg"
+            alt="AmitAI Film Studio Showreel Hero"
             className="w-full h-full object-cover brightness-40"
             loading="eager"
+            onError={(e) => {
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=2000&q=85';
+            }}
           />
 
-          {/* Background Ambient Video (Tier 2: Async stream) */}
+          {/* Background Showreel Video */}
           <video
             ref={heroVideoRef}
-            src="https://assets.mixkit.co/videos/preview/mixkit-cinematic-steam-train-traveling-through-a-desert-42861-large.mp4"
-            muted
+            src="/videos/cbc-power-train.mp4"
+            muted={isMuted}
             loop
             playsInline
             onLoadedData={() => setHeroVideoReady(true)}
-            className={`absolute inset-0 w-full h-full object-cover brightness-35 transition-opacity duration-1000 ${
+            className={`absolute inset-0 w-full h-full object-cover brightness-40 transition-opacity duration-1000 ${
               heroVideoReady ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -57,6 +82,46 @@ export const HomePage: React.FC = () => {
           {/* Film Vignette & Gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-[#09090b]/70" />
           <div className="absolute inset-0 bg-radial-gradient from-transparent to-[#09090b]/80" />
+        </div>
+
+        {/* Top Floating Showreel Controls (Sound & Play/Pause) */}
+        <div className="absolute top-6 left-6 md:left-12 z-20 flex items-center gap-2">
+          <button
+            onClick={togglePlayPause}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-black/70 hover:bg-black/90 border border-white/15 hover:border-amber-400/50 text-white text-xs backdrop-blur-md transition-all shadow-lg"
+            title={isPlaying ? 'השהה סרטון' : 'נגן סרטון'}
+          >
+            {isPlaying ? (
+              <span className="flex items-center gap-0.5">
+                <span className="w-1 h-3 bg-white rounded-xs" />
+                <span className="w-1 h-3 bg-white rounded-xs" />
+              </span>
+            ) : (
+              <span className="w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-6 border-l-amber-400 ml-0.5" />
+            )}
+          </button>
+
+          <button
+            onClick={toggleSound}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 border border-white/15 hover:border-amber-400/50 text-white text-xs font-mono uppercase tracking-wider backdrop-blur-md transition-all shadow-lg group"
+            title={isMuted ? 'הפעל סאונד' : 'השתק סאונד'}
+          >
+            {isMuted ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-zinc-500" />
+                <span>🔇 SOUND OFF</span>
+              </>
+            ) : (
+              <>
+                <span className="flex items-center gap-0.5 h-3">
+                  <span className="w-0.5 h-full bg-amber-400 animate-pulse" />
+                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse delay-75" />
+                  <span className="w-0.5 h-3 bg-amber-400 animate-pulse delay-150" />
+                </span>
+                <span className="text-amber-400 font-bold">🔊 SOUND ON</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Top Studio Micro-Tag */}

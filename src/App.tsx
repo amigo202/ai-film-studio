@@ -9,6 +9,7 @@ import { WorkPage } from './pages/WorkPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
+import { ClientReviewPage } from './pages/ClientReviewPage';
 
 // Admin CMS Pages
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
@@ -28,6 +29,7 @@ export function App() {
               <Route path="/work/:slug" element={<ProjectDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/review/:slug" element={<ClientReviewPage />} />
 
               {/* Protected Admin CMS Routes */}
               <Route path="/admin" element={<AdminLoginPage />} />
