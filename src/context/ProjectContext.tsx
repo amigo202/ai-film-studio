@@ -31,7 +31,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const STORAGE_KEY = 'ai_film_studio_permanent_v5';
+const STORAGE_KEY = 'ai_film_studio_canonical_v6';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -39,7 +39,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load Projects on startup: Exact 18 films from code
+  // Load Projects on startup: Canonical SHOWCASE_PROJECTS is ALWAYS authoritative
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -87,7 +87,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Read from active storage key if user made new edits, otherwise use the authoritative SHOWCASE_PROJECTS
+          // Check if there are user additions/updates in STORAGE_KEY
           const saved = localStorage.getItem(STORAGE_KEY);
           if (saved) {
             try {
@@ -100,7 +100,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             } catch (e) {}
           }
 
-          // Default to the exact 18 films
+          // Force clean authoritative initial load from code
           setProjects(SHOWCASE_PROJECTS);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
 
