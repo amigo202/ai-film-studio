@@ -34,23 +34,12 @@ const ACTIVE_STORAGE_KEY = 'ai_film_studio_persistent_projects_v4';
 const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_v4';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
-const DEMO_PROJECT_SLUGS = new Set([
-  'aethelgard',
-  'yiftach',
-  'maison-nocturne',
-  'cbc-ramadan',
-  'proj-aethelgard',
-  'proj-yiftach',
-  'proj-maison-nocturne',
-  'proj-cbc-ramadan'
-]);
-
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(SHOWCASE_PROJECTS);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load and merge Projects on startup
+  // Load Projects on startup: User's localStorage is 100% Master Truth!
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -98,89 +87,45 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Read set of deleted project IDs/slugs
-          let deletedIds = new Set<string>();
-          try {
-            const rawDeleted = localStorage.getItem(DELETED_STORAGE_KEY);
-            if (rawDeleted) {
-              const parsed = JSON.parse(rawDeleted);
-              if (Array.isArray(parsed)) {
-                parsed.forEach((id: string) => deletedIds.add(id));
+          // 1. Check if user already has saved projects in ACTIVE_STORAGE_KEY
+          const savedActive = localStorage.getItem(ACTIVE_STORAGE_KEY);
+          if (savedActive) {
+            try {
+              const parsed = JSON.parse(savedActive);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                // USER'S EDITS ARE MASTER TRUTH - NEVER OVERWRITE
+                setProjects(parsed);
+                setLoading(false);
+                return;
               }
-            }
-          } catch (e) {}
+            } catch (e) {}
+          }
 
-          // Also auto-add demo projects to deletedIds
-          DEMO_PROJECT_SLUGS.forEach((slug) => deletedIds.add(slug));
-
-          // Scan any user edits saved in ACTIVE_STORAGE_KEY or previous keys
-          const userCustomMap: Record<string, Partial<Project>> = {};
-          const keysToScan = [
-            ACTIVE_STORAGE_KEY,
+          // 2. Check fallback keys in order
+          const fallbackKeys = [
             'ai_film_studio_persistent_projects_v3',
             'ai_film_studio_persistent_projects_v2',
             'ai_film_studio_persistent_projects_v1'
           ];
 
-          for (const key of keysToScan) {
-            const raw = localStorage.getItem(key);
-            if (raw) {
+          for (const key of fallbackKeys) {
+            const saved = localStorage.getItem(key);
+            if (saved) {
               try {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed)) {
-                  parsed.forEach((p: Project) => {
-                    if (p && (p.id || p.slug)) {
-                      if (DEMO_PROJECT_SLUGS.has(p.slug) || DEMO_PROJECT_SLUGS.has(p.id)) return;
-                      if (deletedIds.has(p.id) || deletedIds.has(p.slug)) return;
-                      if (p.id) userCustomMap[p.id] = p;
-                      if (p.slug) userCustomMap[p.slug] = p;
-                      if (p.video?.masterUrl) userCustomMap[p.video.masterUrl] = p;
-                    }
-                  });
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  setProjects(parsed);
+                  localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(parsed));
+                  setLoading(false);
+                  return;
                 }
               } catch (e) {}
             }
           }
 
-          // Filter SHOWCASE_PROJECTS
-          const filteredBase = SHOWCASE_PROJECTS.filter(
-            (base) => !DEMO_PROJECT_SLUGS.has(base.slug) && !DEMO_PROJECT_SLUGS.has(base.id) && !deletedIds.has(base.id) && !deletedIds.has(base.slug)
-          );
-
-          // Merge base projects with userCustomMap
-          const merged: Project[] = filteredBase.map((base) => {
-            const saved = userCustomMap[base.id] || userCustomMap[base.slug] || (base.video?.masterUrl ? userCustomMap[base.video.masterUrl] : undefined);
-            if (saved && saved.title && saved.title !== base.title) {
-              return {
-                ...base,
-                title: saved.title || base.title,
-                shortDescription: saved.shortDescription || base.shortDescription,
-                video: {
-                  ...base.video,
-                  ...(saved.video || {})
-                }
-              };
-            }
-            return base;
-          });
-
-          // Add any newly created user projects
-          Object.values(userCustomMap).forEach((custom: any) => {
-            if (custom && custom.id && custom.title) {
-              if (DEMO_PROJECT_SLUGS.has(custom.slug) || DEMO_PROJECT_SLUGS.has(custom.id) || deletedIds.has(custom.id) || deletedIds.has(custom.slug)) {
-                return;
-              }
-              const alreadyExists = merged.some(
-                (p) => p.id === custom.id || p.slug === custom.slug || (p.video?.masterUrl && p.video.masterUrl === custom.video?.masterUrl)
-              );
-              if (!alreadyExists) {
-                merged.push(custom);
-              }
-            }
-          });
-
-          setProjects(merged);
-          localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(merged));
+          // 3. Only if completely empty on a brand new device: use SHOWCASE_PROJECTS
+          setProjects(SHOWCASE_PROJECTS);
+          localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
