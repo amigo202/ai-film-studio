@@ -31,7 +31,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const STORAGE_KEY = 'ai_film_studio_permanent_projects';
+const STORAGE_KEY = 'ai_film_studio_permanent_v5';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -39,7 +39,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load Projects on startup: Auto-recover user edits from any browser key
+  // Load Projects on startup: Exact 18 films from code
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -87,37 +87,22 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Scan entire localStorage for ANY candidate arrays
-          let bestCandidate: Project[] | null = null;
-          let maxUserItems = 0;
-
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && (key.includes('ai_film') || key.includes('project'))) {
-              try {
-                const raw = localStorage.getItem(key);
-                if (raw) {
-                  const parsed = JSON.parse(raw);
-                  if (Array.isArray(parsed) && parsed.length > 0) {
-                    // Check if it has real projects
-                    const validCount = parsed.filter((p: any) => p && p.title && p.id).length;
-                    if (validCount > maxUserItems) {
-                      maxUserItems = validCount;
-                      bestCandidate = parsed;
-                    }
-                  }
-                }
-              } catch (e) {}
-            }
+          // Read from active storage key if user made new edits, otherwise use the authoritative SHOWCASE_PROJECTS
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setProjects(parsed);
+                setLoading(false);
+                return;
+              }
+            } catch (e) {}
           }
 
-          if (bestCandidate && bestCandidate.length > 0) {
-            setProjects(bestCandidate);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(bestCandidate));
-          } else {
-            setProjects(SHOWCASE_PROJECTS);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
-          }
+          // Default to the exact 18 films
+          setProjects(SHOWCASE_PROJECTS);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
