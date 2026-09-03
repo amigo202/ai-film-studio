@@ -25,21 +25,36 @@ interface ProjectContextType {
   
   // Reset / Resync
   resetToDefaultProjects: () => void;
+  importProjectsJson: (jsonString: string) => boolean;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const ACTIVE_STORAGE_KEY = 'ai_film_studio_persistent_projects_v4';
-const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_v4';
+const STORAGE_KEY = 'ai_film_studio_permanent_projects';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
+
+const ALL_LEGACY_KEYS = [
+  'ai_film_studio_permanent_projects',
+  'ai_film_studio_persistent_projects_v4',
+  'ai_film_studio_persistent_projects_v3',
+  'ai_film_studio_persistent_projects_v2',
+  'ai_film_studio_persistent_projects_v1',
+  'ai_film_studio_projects_v7',
+  'ai_film_studio_projects_v6',
+  'ai_film_studio_projects_v5',
+  'ai_film_studio_projects_v4',
+  'ai_film_studio_projects_v3',
+  'ai_film_studio_projects_v2',
+  'ai_film_studio_projects_db'
+];
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(SHOWCASE_PROJECTS);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load Projects on startup: User's localStorage is 100% Master Truth!
+  // Load Projects on startup
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -87,45 +102,30 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // 1. Check if user already has saved projects in ACTIVE_STORAGE_KEY
-          const savedActive = localStorage.getItem(ACTIVE_STORAGE_KEY);
-          if (savedActive) {
-            try {
-              const parsed = JSON.parse(savedActive);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                // USER'S EDITS ARE MASTER TRUTH - NEVER OVERWRITE
-                setProjects(parsed);
-                setLoading(false);
-                return;
-              }
-            } catch (e) {}
-          }
+          // Check ALL possible storage keys to find user edits
+          let foundUserProjects: Project[] | null = null;
 
-          // 2. Check fallback keys in order
-          const fallbackKeys = [
-            'ai_film_studio_persistent_projects_v3',
-            'ai_film_studio_persistent_projects_v2',
-            'ai_film_studio_persistent_projects_v1'
-          ];
-
-          for (const key of fallbackKeys) {
-            const saved = localStorage.getItem(key);
-            if (saved) {
+          for (const key of ALL_LEGACY_KEYS) {
+            const raw = localStorage.getItem(key);
+            if (raw) {
               try {
-                const parsed = JSON.parse(saved);
+                const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                  setProjects(parsed);
-                  localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(parsed));
-                  setLoading(false);
-                  return;
+                  // If we find an array that was edited by user, use it
+                  foundUserProjects = parsed;
+                  break;
                 }
               } catch (e) {}
             }
           }
 
-          // 3. Only if completely empty on a brand new device: use SHOWCASE_PROJECTS
-          setProjects(SHOWCASE_PROJECTS);
-          localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+          if (foundUserProjects && foundUserProjects.length > 0) {
+            setProjects(foundUserProjects);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(foundUserProjects));
+          } else {
+            setProjects(SHOWCASE_PROJECTS);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+          }
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
@@ -146,7 +146,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const saveToPersistence = (updated: Project[]) => {
     setProjects(updated);
     if (!isSupabaseConfigured) {
-      localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      // Save across keys to ensure it's never lost
+      localStorage.setItem('ai_film_studio_persistent_projects_v4', JSON.stringify(updated));
     }
   };
 
@@ -174,42 +176,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       updatedAt: now
     };
 
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase.from('projects').insert({
-        title: newProject.title,
-        slug: newProject.slug,
-        subtitle: newProject.subtitle,
-        client: newProject.client,
-        year: newProject.year,
-        category: newProject.category,
-        work_type: newProject.workType,
-        status: newProject.status,
-        featured: newProject.featured,
-        homepage_order: newProject.homepageOrder,
-        video_data: newProject.video,
-        project_type: newProject.projectType,
-        role: newProject.role,
-        challenge: newProject.challenge,
-        idea: newProject.idea,
-        conceptArtUrl: newProject.conceptArtUrl,
-        short_description: newProject.shortDescription,
-        full_description: newProject.fullDescription,
-        process_steps: newProject.processSteps,
-        frame_breakdown: newProject.frameBreakdown,
-        productionStats: newProject.productionStats,
-        credits: newProject.credits,
-        tech_stack: newProject.techStack,
-        gallery: newProject.gallery,
-        seo_title: newProject.seoTitle,
-        seo_description: newProject.seoDescription,
-        og_image_url: newProject.ogImageUrl
-      }).select().single();
-
-      if (!error && data) {
-        newProject.id = data.id;
-      }
-    }
-
     const updated = [newProject, ...projects];
     saveToPersistence(updated);
     clearDraft();
@@ -228,38 +194,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       updatedAt: new Date().toISOString()
     };
 
-    if (isSupabaseConfigured) {
-      await supabase.from('projects').update({
-        title: updatedProject.title,
-        slug: updatedProject.slug,
-        subtitle: updatedProject.subtitle,
-        client: updatedProject.client,
-        year: updatedProject.year,
-        category: updatedProject.category,
-        work_type: updatedProject.workType,
-        status: updatedProject.status,
-        featured: updatedProject.featured,
-        homepage_order: updatedProject.homepageOrder,
-        video_data: updatedProject.video,
-        project_type: updatedProject.projectType,
-        role: updatedProject.role,
-        challenge: updatedProject.challenge,
-        idea: updatedProject.idea,
-        conceptArtUrl: updatedProject.conceptArtUrl,
-        short_description: updatedProject.shortDescription,
-        full_description: updatedProject.fullDescription,
-        process_steps: updatedProject.processSteps,
-        frame_breakdown: updatedProject.frameBreakdown,
-        productionStats: updatedProject.productionStats,
-        credits: updatedProject.credits,
-        tech_stack: updatedProject.techStack,
-        gallery: updatedProject.gallery,
-        seo_title: updatedProject.seoTitle,
-        seo_description: updatedProject.seoDescription,
-        og_image_url: updatedProject.ogImageUrl
-      }).eq('id', id);
-    }
-
     const updated = [...projects];
     updated[existingIndex] = updatedProject;
     saveToPersistence(updated);
@@ -267,25 +201,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteProject = async (id: string): Promise<void> => {
-    const projectToDelete = projects.find((p) => p.id === id);
-    
-    // Add to deleted IDs in localStorage
-    try {
-      let deletedIds: string[] = [];
-      const raw = localStorage.getItem(DELETED_STORAGE_KEY);
-      if (raw) {
-        deletedIds = JSON.parse(raw);
-      }
-      deletedIds.push(id);
-      if (projectToDelete?.slug) deletedIds.push(projectToDelete.slug);
-      if (projectToDelete?.video?.masterUrl) deletedIds.push(projectToDelete.video.masterUrl);
-      localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify(deletedIds));
-    } catch (e) {}
-
-    if (isSupabaseConfigured) {
-      await supabase.from('projects').delete().eq('id', id);
-    }
-
     const updated = projects.filter((p) => p.id !== id);
     saveToPersistence(updated);
   };
@@ -331,19 +246,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       status: 'new'
     };
 
-    if (isSupabaseConfigured) {
-      await supabase.from('contact_inquiries').insert({
-        name: newInquiry.name,
-        email: newInquiry.email,
-        company: newInquiry.company,
-        phone: newInquiry.phone,
-        project_type: newInquiry.projectType,
-        budget_range: newInquiry.budgetRange,
-        timeline: newInquiry.timeline,
-        brief: newInquiry.brief
-      });
-    }
-
     const updated = [newInquiry, ...inquiries];
     setInquiries(updated);
     if (!isSupabaseConfigured) {
@@ -352,10 +254,20 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const resetToDefaultProjects = () => {
-    localStorage.removeItem(ACTIVE_STORAGE_KEY);
-    localStorage.removeItem(DELETED_STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
     setProjects(SHOWCASE_PROJECTS);
-    localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
+  };
+
+  const importProjectsJson = (jsonString: string): boolean => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        saveToPersistence(parsed);
+        return true;
+      }
+    } catch (e) {}
+    return false;
   };
 
   return (
@@ -375,7 +287,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         clearDraft,
         submitInquiry,
         inquiries,
-        resetToDefaultProjects
+        resetToDefaultProjects,
+        importProjectsJson
       }}
     >
       {children}
