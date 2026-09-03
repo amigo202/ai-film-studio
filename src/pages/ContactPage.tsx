@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StudioLayout } from '../components/layout/StudioLayout';
 import { useProjects } from '../context/ProjectContext';
-import { MessageCircle, Mail, Phone, Send, CheckCircle2, ArrowUpRight, Sparkles, Calculator } from 'lucide-react';
+import { MessageCircle, Mail, Phone, Send, CheckCircle2, ArrowUpRight, Sparkles } from 'lucide-react';
 import { PriceCalculatorModal } from '../components/calculator/PriceCalculatorModal';
 
 export const ContactPage: React.FC = () => {

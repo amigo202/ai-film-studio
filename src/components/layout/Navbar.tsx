@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Film, Menu, X, ArrowUpRight, Calculator } from 'lucide-react';
+import { Film, Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
 import { PriceCalculatorModal } from '../calculator/PriceCalculatorModal';
 
 export const Navbar: React.FC = () => {
