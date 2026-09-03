@@ -30,22 +30,20 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const DRAFT_KEY = 'ai_film_studio_builder_draft';
-const ACTIVE_STORAGE_KEY = 'ai_film_studio_persistent_projects_v3';
-const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_v3';
+const ACTIVE_STORAGE_KEY = 'ai_film_studio_persistent_projects_v4';
+const DELETED_STORAGE_KEY = 'ai_film_studio_deleted_projects_v4';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
-// Old mock template slugs and old storage keys to purge
-const OLD_LEGACY_KEYS = [
-  'ai_film_studio_projects_db',
-  'ai_film_studio_projects_v2',
-  'ai_film_studio_projects_v3',
-  'ai_film_studio_projects_v4',
-  'ai_film_studio_projects_v5',
-  'ai_film_studio_projects_v6',
-  'ai_film_studio_projects_v7',
-  'ai_film_studio_persistent_projects_v1',
-  'ai_film_studio_persistent_projects_v2'
-];
+const DEMO_PROJECT_SLUGS = new Set([
+  'aethelgard',
+  'yiftach',
+  'maison-nocturne',
+  'cbc-ramadan',
+  'proj-aethelgard',
+  'proj-yiftach',
+  'proj-maison-nocturne',
+  'proj-cbc-ramadan'
+]);
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(SHOWCASE_PROJECTS);
@@ -100,14 +98,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // 1. Purge old stale legacy keys that may pollute mobile devices
-          OLD_LEGACY_KEYS.forEach((key) => {
-            try {
-              localStorage.removeItem(key);
-            } catch (e) {}
-          });
-
-          // 2. Read deleted project IDs
+          // Read set of deleted project IDs/slugs
           let deletedIds = new Set<string>();
           try {
             const rawDeleted = localStorage.getItem(DELETED_STORAGE_KEY);
@@ -119,32 +110,77 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             }
           } catch (e) {}
 
-          // 3. Read active user edits from ACTIVE_STORAGE_KEY
-          const activeSaved = localStorage.getItem(ACTIVE_STORAGE_KEY);
-          let userSavedProjects: Project[] = [];
-          if (activeSaved) {
-            try {
-              const parsed = JSON.parse(activeSaved);
-              if (Array.isArray(parsed)) {
-                userSavedProjects = parsed;
-              }
-            } catch (e) {}
+          // Also auto-add demo projects to deletedIds
+          DEMO_PROJECT_SLUGS.forEach((slug) => deletedIds.add(slug));
+
+          // Scan any user edits saved in ACTIVE_STORAGE_KEY or previous keys
+          const userCustomMap: Record<string, Partial<Project>> = {};
+          const keysToScan = [
+            ACTIVE_STORAGE_KEY,
+            'ai_film_studio_persistent_projects_v3',
+            'ai_film_studio_persistent_projects_v2',
+            'ai_film_studio_persistent_projects_v1'
+          ];
+
+          for (const key of keysToScan) {
+            const raw = localStorage.getItem(key);
+            if (raw) {
+              try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                  parsed.forEach((p: Project) => {
+                    if (p && (p.id || p.slug)) {
+                      if (DEMO_PROJECT_SLUGS.has(p.slug) || DEMO_PROJECT_SLUGS.has(p.id)) return;
+                      if (deletedIds.has(p.id) || deletedIds.has(p.slug)) return;
+                      if (p.id) userCustomMap[p.id] = p;
+                      if (p.slug) userCustomMap[p.slug] = p;
+                      if (p.video?.masterUrl) userCustomMap[p.video.masterUrl] = p;
+                    }
+                  });
+                }
+              } catch (e) {}
+            }
           }
 
-          if (userSavedProjects.length > 0) {
-            // Apply deleted filter
-            const filtered = userSavedProjects.filter(
-              (p) => !deletedIds.has(p.id) && !deletedIds.has(p.slug)
-            );
-            setProjects(filtered);
-          } else {
-            // Fresh authoritative list from code
-            const fresh = SHOWCASE_PROJECTS.filter(
-              (p) => !deletedIds.has(p.id) && !deletedIds.has(p.slug)
-            );
-            setProjects(fresh);
-            localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(fresh));
-          }
+          // Filter SHOWCASE_PROJECTS
+          const filteredBase = SHOWCASE_PROJECTS.filter(
+            (base) => !DEMO_PROJECT_SLUGS.has(base.slug) && !DEMO_PROJECT_SLUGS.has(base.id) && !deletedIds.has(base.id) && !deletedIds.has(base.slug)
+          );
+
+          // Merge base projects with userCustomMap
+          const merged: Project[] = filteredBase.map((base) => {
+            const saved = userCustomMap[base.id] || userCustomMap[base.slug] || (base.video?.masterUrl ? userCustomMap[base.video.masterUrl] : undefined);
+            if (saved && saved.title && saved.title !== base.title) {
+              return {
+                ...base,
+                title: saved.title || base.title,
+                shortDescription: saved.shortDescription || base.shortDescription,
+                video: {
+                  ...base.video,
+                  ...(saved.video || {})
+                }
+              };
+            }
+            return base;
+          });
+
+          // Add any newly created user projects
+          Object.values(userCustomMap).forEach((custom: any) => {
+            if (custom && custom.id && custom.title) {
+              if (DEMO_PROJECT_SLUGS.has(custom.slug) || DEMO_PROJECT_SLUGS.has(custom.id) || deletedIds.has(custom.id) || deletedIds.has(custom.slug)) {
+                return;
+              }
+              const alreadyExists = merged.some(
+                (p) => p.id === custom.id || p.slug === custom.slug || (p.video?.masterUrl && p.video.masterUrl === custom.video?.masterUrl)
+              );
+              if (!alreadyExists) {
+                merged.push(custom);
+              }
+            }
+          });
+
+          setProjects(merged);
+          localStorage.setItem(ACTIVE_STORAGE_KEY, JSON.stringify(merged));
 
           const localInquiries = localStorage.getItem(INQUIRIES_KEY);
           if (localInquiries) {
