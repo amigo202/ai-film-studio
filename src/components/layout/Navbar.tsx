@@ -82,14 +82,14 @@ export const Navbar: React.FC = () => {
               );
             })}
 
-            {/* Quick Price Calculator Button */}
+            {/* Quick Price Packages Button */}
             <button
               type="button"
               onClick={() => setCalculatorOpen(true)}
               className="flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-black bg-amber-400/10 hover:bg-amber-400 border border-amber-400/30 px-4 py-2 rounded-full transition-all duration-300 shadow-sm"
             >
-              <Calculator className="w-3.5 h-3.5" />
-              <span>מחשבון מחיר</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>חבילות ומחירים</span>
             </button>
 
             <Link
@@ -133,8 +133,8 @@ export const Navbar: React.FC = () => {
                 }}
                 className="flex items-center justify-center gap-2 text-sm font-bold bg-amber-500/10 border border-amber-500/30 text-amber-400 py-3 rounded-xl mt-2"
               >
-                <Calculator className="w-4 h-4" />
-                <span>מחשבון הצעת מחיר מהיר</span>
+                <Sparkles className="w-4 h-4" />
+                <span>חבילות הפקה ומחירים</span>
               </button>
 
               <Link

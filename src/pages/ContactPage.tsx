@@ -63,18 +63,18 @@ export const ContactPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Quick Calculator Callout Banner */}
+        {/* Quick Pricing Packages Callout Banner */}
         <div className="mb-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[#121216] to-[#121216] border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-amber-400 text-black flex items-center justify-center font-bold shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.4)]">
-              <Calculator className="w-6 h-6" />
+              <Sparkles className="w-6 h-6" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white mb-1">
-                רוצים הערכת תקציב מיידית לסרט שלכם?
+                רוצים לראות חבילות הפקה ומחירים?
               </h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                הפעילו את המחשבון האינטראקטיבי לקבלת טווח מחיר וזמן אספקה תוך 30 שניות.
+                צפו ב-3 חבילות ההפקה הפופולריות שלנו לקבלת הצעת מחיר ישירה.
               </p>
             </div>
           </div>
@@ -84,8 +84,8 @@ export const ContactPage: React.FC = () => {
             onClick={() => setCalculatorOpen(true)}
             className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105"
           >
-            <Calculator className="w-4 h-4" />
-            <span>פתיחת מחשבון הצעת מחיר</span>
+            <Sparkles className="w-4 h-4" />
+            <span>צפייה בחבילות ומחירים</span>
           </button>
         </div>
 

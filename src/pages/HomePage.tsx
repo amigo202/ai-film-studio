@@ -162,8 +162,8 @@ export const HomePage: React.FC = () => {
                 onClick={() => setCalculatorOpen(true)}
                 className="flex items-center gap-3 px-7 py-4 rounded-full bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/40 font-bold tracking-wider text-sm backdrop-blur-md transition-all shadow-md"
               >
-                <Calculator className="w-4 h-4" />
-                <span>מחשבון עלויות והצעת מחיר</span>
+                <Sparkles className="w-4 h-4" />
+                <span>חבילות הפקה ומחירים</span>
               </button>
 
               <Link
