@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle, Calculator } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
 import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
-import { BeforeAfterSlider } from '../components/interactive/BeforeAfterSlider';
 import { PriceCalculatorModal } from '../components/calculator/PriceCalculatorModal';
 
 export const HomePage: React.FC = () => {
@@ -253,10 +252,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. BEFORE & AFTER AI COMPARISON SLIDER */}
-      <BeforeAfterSlider />
-
-      {/* 5. FAST CONTACT CTA BANNER */}
+      {/* 4. FAST CONTACT CTA BANNER */}
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto text-center font-hebrew">
         <div className="p-12 md:p-20 rounded-2xl bg-gradient-to-b from-[#121216] to-[#09090b] border border-white/10 relative overflow-hidden">
           <div className="relative z-10 max-w-2xl mx-auto">
@@ -276,8 +272,8 @@ export const HomePage: React.FC = () => {
                 onClick={() => setCalculatorOpen(true)}
                 className="flex items-center gap-3 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold uppercase tracking-wider text-sm transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105"
               >
-                <Calculator className="w-4 h-4" />
-                <span>מחשבון עלויות והצעת מחיר</span>
+                <Sparkles className="w-4 h-4" />
+                <span>חבילות הפקה ומחירים</span>
               </button>
 
               <a
