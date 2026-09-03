@@ -34,27 +34,12 @@ const DRAFT_KEY = 'ai_film_studio_builder_draft';
 const STORAGE_KEY = 'ai_film_studio_permanent_projects';
 const INQUIRIES_KEY = 'ai_film_studio_inquiries';
 
-const ALL_LEGACY_KEYS = [
-  'ai_film_studio_permanent_projects',
-  'ai_film_studio_persistent_projects_v4',
-  'ai_film_studio_persistent_projects_v3',
-  'ai_film_studio_persistent_projects_v2',
-  'ai_film_studio_persistent_projects_v1',
-  'ai_film_studio_projects_v7',
-  'ai_film_studio_projects_v6',
-  'ai_film_studio_projects_v5',
-  'ai_film_studio_projects_v4',
-  'ai_film_studio_projects_v3',
-  'ai_film_studio_projects_v2',
-  'ai_film_studio_projects_db'
-];
-
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(SHOWCASE_PROJECTS);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load Projects on startup
+  // Load Projects on startup: Auto-recover user edits from any browser key
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -102,26 +87,33 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProjects(SHOWCASE_PROJECTS);
           }
         } else {
-          // Check ALL possible storage keys to find user edits
-          let foundUserProjects: Project[] | null = null;
+          // Scan entire localStorage for ANY candidate arrays
+          let bestCandidate: Project[] | null = null;
+          let maxUserItems = 0;
 
-          for (const key of ALL_LEGACY_KEYS) {
-            const raw = localStorage.getItem(key);
-            if (raw) {
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.includes('ai_film') || key.includes('project'))) {
               try {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                  // If we find an array that was edited by user, use it
-                  foundUserProjects = parsed;
-                  break;
+                const raw = localStorage.getItem(key);
+                if (raw) {
+                  const parsed = JSON.parse(raw);
+                  if (Array.isArray(parsed) && parsed.length > 0) {
+                    // Check if it has real projects
+                    const validCount = parsed.filter((p: any) => p && p.title && p.id).length;
+                    if (validCount > maxUserItems) {
+                      maxUserItems = validCount;
+                      bestCandidate = parsed;
+                    }
+                  }
                 }
               } catch (e) {}
             }
           }
 
-          if (foundUserProjects && foundUserProjects.length > 0) {
-            setProjects(foundUserProjects);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(foundUserProjects));
+          if (bestCandidate && bestCandidate.length > 0) {
+            setProjects(bestCandidate);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(bestCandidate));
           } else {
             setProjects(SHOWCASE_PROJECTS);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(SHOWCASE_PROJECTS));
@@ -147,8 +139,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProjects(updated);
     if (!isSupabaseConfigured) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      // Save across keys to ensure it's never lost
-      localStorage.setItem('ai_film_studio_persistent_projects_v4', JSON.stringify(updated));
     }
   };
 
