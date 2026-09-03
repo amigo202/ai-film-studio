@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { StudioLayout } from '../components/layout/StudioLayout';
 import { useProjects } from '../context/ProjectContext';
-import { MessageCircle, Mail, Phone, Send, CheckCircle2, ArrowUpRight, Sparkles } from 'lucide-react';
+import { MessageCircle, Mail, Phone, Send, CheckCircle2, ArrowUpRight, Sparkles, Calculator } from 'lucide-react';
+import { PriceCalculatorModal } from '../components/calculator/PriceCalculatorModal';
 
 export const ContactPage: React.FC = () => {
   const { submitInquiry } = useProjects();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -59,6 +61,32 @@ export const ContactPage: React.FC = () => {
           <p className="text-lg text-zinc-300 font-light font-hebrew leading-relaxed">
             שלחו לנו בריף ראשוני, רעיון או בקשה להצעת מחיר. אנחנו חוזרים לרוב תוך פחות מ-24 שעות עם כיוון קריאייטיבי ראשוני.
           </p>
+        </div>
+
+        {/* Quick Calculator Callout Banner */}
+        <div className="mb-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[#121216] to-[#121216] border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-400 text-black flex items-center justify-center font-bold shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+              <Calculator className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white mb-1">
+                רוצים הערכת תקציב מיידית לסרט שלכם?
+              </h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                הפעילו את המחשבון האינטראקטיבי לקבלת טווח מחיר וזמן אספקה תוך 30 שניות.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setCalculatorOpen(true)}
+            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105"
+          >
+            <Calculator className="w-4 h-4" />
+            <span>פתיחת מחשבון הצעת מחיר</span>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
@@ -273,6 +301,12 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Global Calculator Modal */}
+      <PriceCalculatorModal
+        isOpen={calculatorOpen}
+        onClose={() => setCalculatorOpen(false)}
+      />
     </StudioLayout>
   );
 };

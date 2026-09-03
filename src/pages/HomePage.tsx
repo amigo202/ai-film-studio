@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle, Calculator } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
 import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
+import { BeforeAfterSlider } from '../components/interactive/BeforeAfterSlider';
+import { PriceCalculatorModal } from '../components/calculator/PriceCalculatorModal';
 
 export const HomePage: React.FC = () => {
   const { projects } = useProjects();
   const [heroVideoReady, setHeroVideoReady] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
@@ -155,9 +158,17 @@ export const HomePage: React.FC = () => {
                 <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-1" />
               </button>
 
+              <button
+                onClick={() => setCalculatorOpen(true)}
+                className="flex items-center gap-3 px-7 py-4 rounded-full bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/40 font-bold tracking-wider text-sm backdrop-blur-md transition-all shadow-md"
+              >
+                <Calculator className="w-4 h-4" />
+                <span>מחשבון עלויות והצעת מחיר</span>
+              </button>
+
               <Link
                 to="/contact"
-                className="flex items-center gap-3 px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 hover:border-amber-400/50 font-bold tracking-wider text-sm backdrop-blur-md transition-all"
+                className="flex items-center gap-3 px-7 py-4 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 hover:border-amber-400/50 font-bold tracking-wider text-sm backdrop-blur-md transition-all"
               >
                 <span>התחלת פרויקט</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -242,7 +253,10 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. FAST CONTACT CTA BANNER */}
+      {/* 4. BEFORE & AFTER AI COMPARISON SLIDER */}
+      <BeforeAfterSlider />
+
+      {/* 5. FAST CONTACT CTA BANNER */}
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto text-center font-hebrew">
         <div className="p-12 md:p-20 rounded-2xl bg-gradient-to-b from-[#121216] to-[#09090b] border border-white/10 relative overflow-hidden">
           <div className="relative z-10 max-w-2xl mx-auto">
@@ -258,6 +272,14 @@ export const HomePage: React.FC = () => {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
+              <button
+                onClick={() => setCalculatorOpen(true)}
+                className="flex items-center gap-3 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold uppercase tracking-wider text-sm transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105"
+              >
+                <Calculator className="w-4 h-4" />
+                <span>מחשבון עלויות והצעת מחיר</span>
+              </button>
+
               <a
                 href="https://wa.me/972526016115?text=היי%20אמיתי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
                 target="_blank"
@@ -272,13 +294,19 @@ export const HomePage: React.FC = () => {
                 to="/contact"
                 className="flex items-center gap-3 px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 hover:border-amber-400/50 font-bold tracking-wider text-sm backdrop-blur-md transition-all"
               >
-                <span>השארת פרטים להצעת מחיר</span>
+                <span>השארת פרטים</span>
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Global Calculator Modal */}
+      <PriceCalculatorModal
+        isOpen={calculatorOpen}
+        onClose={() => setCalculatorOpen(false)}
+      />
     </StudioLayout>
   );
 };
