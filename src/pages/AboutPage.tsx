@@ -1,56 +1,50 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { StudioLayout } from '../components/layout/StudioLayout';
-import { Film, ArrowUpRight } from 'lucide-react';
+import { Film, ArrowUpRight, MessageCircle } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   const capabilities = [
     {
-      title: 'Creative Direction & Concept',
-      enTitle: 'CREATIVE DIRECTION',
-      desc: 'פיתוח קונספט תסריטאי וויזואלי מאפס, בניית שפה מותגית ייחודית ופיצוח תובנות צרכניות/רגשיות.'
+      title: 'קריאייטיב ופיתוח קונספט',
+      desc: 'פיתוח קונספט תסריטאי וויזואלי מאפס, בניית שפה מותגית ייחודית ופיצוח תובנות צרכניות ורגשיות.'
     },
     {
-      title: 'AI Film Production',
-      enTitle: 'GENERATIVE CINEMA',
-      desc: 'הפקת סרטי AI מקצה לקצה — החל מיצירת פריימים בסיסיים, שליטה במצלמות, ועד לרינדור תנועה מורכב.'
+      title: 'הפקת סרטי AI מקצה לקצה',
+      desc: 'הפקת סרטים מלאה — החל מיצירת שוטים מרהיבים, שליטה במצלמות, ועד לרינדור תנועה קולנועי מורכב.'
     },
     {
-      title: 'Character LoRA Consistency',
-      enTitle: 'CHARACTER CONSISTENCY',
+      title: 'עקביות שחקנים ודמויות (LoRA)',
       desc: 'אימון מודלים מותאמים אישית (LoRA) לשמירה על תווי פנים, הבעות, לבוש וגיל של שחקנים לאורך כל הסרט.'
     },
     {
-      title: 'Cinematic Worldbuilding',
-      enTitle: 'WORLDBUILDING & ENVIRONMENTS',
+      title: 'בניית עולמות ולוקיישנים',
       desc: 'בניית עולמות היסטוריים, עתידניים ואבסטרקטיים בדיוק ארכיטקטוני ואווירתי ללא צורך בלוקיישנים פיזיים.'
     },
     {
-      title: 'Commercials & Spec Ads',
-      enTitle: 'HIGH-END COMMERCIALS',
-      desc: 'פרסומות טלוויזיה ודיגיטל באיכות פרימיום עבור רשתות קמעונאות, מותגי יוקרה, טכנולוגיה ורכב.'
+      title: 'פרסומות וקמפיינים למותגים',
+      desc: 'פרסומות טלוויזיה ודיגיטל באיכות פרימיום עבור חברות מובילות, רשתות קמעונאות, מוסדות ומשרדי ממשלה.'
     },
     {
-      title: '4K Post & Sound Design',
-      enTitle: 'POST & SOUND ENGINEERING',
-      desc: 'עריכה קצבית ב-DaVinci Resolve, עיצוב סאונד סינמטי מותאם, אפקטים קוליים ו-Upscale באיכות DCI 4K.'
+      title: 'עריכה וסאונד באיכות 4K',
+      desc: 'עריכה קצבית ב-DaVinci Resolve, עיצוב סאונד סינמטי מותאם, אפקטים קוליים ואיכות שידור 4K סופית.'
     }
   ];
 
   return (
     <StudioLayout>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 text-right font-hebrew">
         {/* Top Header */}
         <div className="max-w-4xl pb-16 border-b border-white/10">
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-4">
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-4 justify-end">
+            <span>מניפסט הסטודיו</span>
             <Film className="w-3.5 h-3.5" />
-            <span>/ STUDIO MANIFESTO</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase tracking-tight text-white font-syne leading-tight mb-8">
-            AI CHANGED THE TOOLS. <br />
-            <span className="text-amber-400">IT DIDN'T CHANGE</span> <br />
-            THE NEED FOR A GOOD IDEA.
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white font-syne leading-tight mb-8">
+            ה-AI שינתה את הכלים. <br />
+            <span className="text-amber-400">היא לא שינתה את הצורך</span> <br />
+            ברעיון מעולה ובבימוי חכם.
           </h1>
 
           <p className="text-xl sm:text-2xl text-zinc-300 font-light font-hebrew leading-relaxed">
@@ -62,17 +56,17 @@ export const AboutPage: React.FC = () => {
         <section className="py-20 border-b border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6">
             <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-3">
-              THE PHILOSOPHY
+              הפילוסופיה שלנו
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white font-syne mb-6">
-              BEYOND PROMPT GENERATION
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+              הרבה מעבר לכתיבת פרומפט
             </h2>
             <div className="space-y-4 text-base text-zinc-300 font-hebrew leading-relaxed">
               <p>
                 כל אחד יכול לכתוב פרומפט ולקבל תמונה יפה. אבל יצירת סרט קולנועי אמיתי דורשת הרבה מעבר לכך: עקביות של שחקנים לאורך עשרות שוטים, שליטה בדינמיקת תאורה, עריכת קצב מדויקת, עיצוב סאונד שמרעיד את החזה ובימוי שנוגע בלב.
               </p>
               <p>
-                הסטודיו פועל לפי מתודולוגיית הפקה קולנועית שלמה (8-Stage Generative Pipeline) שמבטיחה שכל פרויקט יעמוד בסטנדרטים הגבוהים ביותר של הטלוויזיה, הקולנוע ועולם הפרסום הבינלאומי.
+                הסטודיו פועל לפי מתודולוגיית הפקה קולנועית שלמה שמבטיחה שכל פרויקט יעמוד בסטנדרטים הגבוהים ביותר של הטלוויזיה, הקולנוע ועולם הפרסום.
               </p>
             </div>
           </div>
@@ -84,16 +78,16 @@ export const AboutPage: React.FC = () => {
                 alt="AmitAI Visual Development"
                 className="w-full h-full object-cover brightness-75"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-8 text-right">
                 <div>
                   <span className="text-xs font-mono text-amber-400 uppercase tracking-widest block mb-1">
-                    DIRECTOR & FOUNDER
+                    במאי ומייסד הסטודיו
                   </span>
                   <h4 className="text-xl font-syne font-bold uppercase text-white">
                     AmitAI · אמיתי כהן
                   </h4>
                   <p className="text-xs text-zinc-300 font-hebrew mt-2 leading-relaxed">
-                    במאי, סטוריטלר ויוצר קולנוע מבוסס AI. מתמחה בבניית עולמות, בימוי מדויק ואימוני עקביות (LoRA) להפקות מסחריות ועלילתיות.
+                    במאי, סטוריטלר ויוצר קולנוע מבוסס AI. מתמחה בבניית עולמות, בימוי מדויק ואימוני עקביות שחקנים (LoRA) להפקות מסחריות, מוסדיות ועלילתיות.
                   </p>
                 </div>
               </div>
@@ -105,10 +99,10 @@ export const AboutPage: React.FC = () => {
         <section className="py-20">
           <div className="mb-12">
             <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
-              SERVICES & CAPABILITIES
+              שירותים ויכולות
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white font-syne">
-              WHAT WE DO
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+              מה אנחנו עושים
             </h2>
           </div>
 
@@ -120,9 +114,9 @@ export const AboutPage: React.FC = () => {
               >
                 <div>
                   <span className="font-mono text-xs text-amber-400 block mb-2">
-                    0{idx + 1} / {cap.enTitle}
+                    0{idx + 1}
                   </span>
-                  <h3 className="font-syne text-xl font-bold uppercase text-white mb-3 group-hover:text-amber-300 transition-colors">
+                  <h3 className="font-bold text-lg text-white mb-3 group-hover:text-amber-300 transition-colors">
                     {cap.title}
                   </h3>
                   <p className="text-sm text-zinc-400 font-hebrew leading-relaxed">
@@ -135,26 +129,38 @@ export const AboutPage: React.FC = () => {
         </section>
 
         {/* CTA Footer Section */}
-        <section className="py-16 p-10 md:p-16 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[#121216] to-[#121216] border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-8">
+        <section className="py-16 p-10 md:p-16 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[#121216] to-[#121216] border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-8 text-right">
           <div>
             <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
-              START A PROJECT
+              בואו נשתף פעולה
             </span>
-            <h3 className="text-2xl md:text-4xl font-bold uppercase tracking-tight text-white font-syne">
-              מוכנים ליצור את הסרט הבא שלכם?
+            <h3 className="text-2xl sm:text-3xl font-bold uppercase text-white mb-2">
+              יש לכם פרויקט שרוצה לבלוט?
             </h3>
-            <p className="text-sm text-zinc-400 font-hebrew mt-2">
-              צרו איתנו קשר לשיחת היכרות, בריף או הצעת הפקה מלאה.
+            <p className="text-sm text-zinc-400 font-hebrew max-w-lg leading-relaxed">
+              דברו ישירות עם אמיתי לקבלת ייעוץ, כיוון קריאייטיבי והצעת מחיר מותאמת.
             </p>
           </div>
 
-          <Link
-            to="/contact"
-            className="flex-shrink-0 flex items-center gap-3 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase tracking-wider text-sm transition-all"
-          >
-            <span>דברו איתנו</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              href="https://wa.me/972526016115?text=היי%20אמיתי,%20אשמח%20לשמוע%20על%20הפקת%20סרט%20AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold tracking-wider text-xs uppercase transition-all shadow-lg"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>שיחה מהירה בוואטסאפ</span>
+            </a>
+
+            <Link
+              to="/contact"
+              className="flex items-center gap-2 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold tracking-wider text-xs uppercase transition-all shadow-lg"
+            >
+              <span>צור קשר</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
         </section>
       </div>
     </StudioLayout>
