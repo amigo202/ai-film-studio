@@ -121,17 +121,18 @@ export const StudioAiConcierge: React.FC = () => {
 
   return (
     <>
-      {/* Floating Trigger Button in Bottom Left */}
-      <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3">
+      {/* Floating Trigger Button - Compact on Mobile, Rich on Desktop */}
+      <div className="fixed bottom-5 left-4 sm:left-6 z-40">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#121216]/95 hover:bg-black text-white border-2 border-amber-400/60 hover:border-amber-400 shadow-[0_0_25px_rgba(212,175,55,0.35)] backdrop-blur-xl transition-all duration-300 hover:scale-105 font-hebrew text-right"
+            className="group relative flex items-center gap-2.5 p-2.5 sm:px-4 sm:py-3 rounded-full bg-[#121216]/95 hover:bg-black text-white border border-amber-400/50 hover:border-amber-400 shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all duration-300 hover:scale-105 font-hebrew text-right"
+            title="עוזר קריאייטיב 24/7"
           >
-            <div className="w-8 h-8 rounded-full bg-amber-400 text-black flex items-center justify-center font-bold shadow-md">
-              <Sparkles className="w-4 h-4 animate-pulse" />
+            <div className="w-8 h-8 rounded-full bg-amber-400 text-black flex items-center justify-center font-bold shadow-sm shrink-0">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <div className="flex flex-col text-right">
+            <div className="hidden sm:flex flex-col text-right">
               <span className="text-xs font-bold text-amber-300">בדיקת רעיון ב-AI</span>
               <span className="text-[10px] text-zinc-400">עוזר קריאייטיב 24/7</span>
             </div>
@@ -141,24 +142,24 @@ export const StudioAiConcierge: React.FC = () => {
 
       {/* Floating Chat Window Modal */}
       {isOpen && (
-        <div className="fixed bottom-6 left-4 sm:left-6 z-50 w-[92vw] sm:w-[400px] h-[540px] max-h-[85vh] bg-[#121216] border border-amber-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden font-hebrew text-right animate-fade-in">
+        <div className="fixed bottom-5 left-3 sm:left-6 z-50 w-[calc(100vw-24px)] sm:w-[400px] h-[520px] max-h-[82vh] bg-[#121216] border border-amber-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden font-hebrew text-right animate-fade-in">
           {/* Header */}
           <div className="p-4 bg-[#181820] border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl bg-amber-400 text-black flex items-center justify-center font-bold shadow-md">
-                  <Bot className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-xl bg-amber-400 text-black flex items-center justify-center font-bold shadow-md">
+                  <Bot className="w-4 h-4" />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#181820]" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#181820]" />
               </div>
               <div>
                 <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
                   <span>עוזר הקריאייטיב</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+                  <span className="text-[10px] px-2 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
                     AmitAI
                   </span>
                 </h3>
-                <span className="text-[11px] text-zinc-400">מענה אוטומטי וסיעור מוחות 24/7</span>
+                <span className="text-[10px] text-zinc-400">מענה אוטומטי וסיעור מוחות 24/7</span>
               </div>
             </div>
 
@@ -171,14 +172,14 @@ export const StudioAiConcierge: React.FC = () => {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`p-3.5 rounded-2xl max-w-[88%] text-xs leading-relaxed ${
+                  className={`p-3.5 rounded-2xl max-w-[90%] text-xs leading-relaxed ${
                     msg.sender === 'user'
                       ? 'bg-amber-400 text-black font-medium rounded-br-none shadow-md'
                       : 'bg-[#1c1c24] text-zinc-200 border border-white/5 rounded-bl-none'
@@ -193,7 +194,7 @@ export const StudioAiConcierge: React.FC = () => {
                     href={`https://wa.me/972526016115?text=${encodeURIComponent(msg.suggestedAction.whatsappText)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2.5 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg transition-all hover:scale-105"
+                    className="mt-2 flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg transition-all hover:scale-105"
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />
                     <span>{msg.suggestedAction.label}</span>
@@ -203,11 +204,11 @@ export const StudioAiConcierge: React.FC = () => {
             ))}
 
             {isTyping && (
-              <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-[#1c1c24] border border-white/5 text-zinc-400 text-xs w-fit">
+              <div className="flex items-center gap-1.5 p-2.5 rounded-2xl bg-[#1c1c24] border border-white/5 text-zinc-400 text-xs w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce" />
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce delay-100" />
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce delay-200" />
-                <span className="mr-1 text-[11px]">חושב על כיוון...</span>
+                <span className="mr-1 text-[10px]">חושב על כיוון...</span>
               </div>
             )}
 
@@ -216,14 +217,14 @@ export const StudioAiConcierge: React.FC = () => {
 
           {/* Quick Starter Pills (if only initial message) */}
           {messages.length <= 2 && (
-            <div className="px-4 pb-2">
-              <span className="text-[10px] text-zinc-500 block mb-1.5">הצעות מהירות לפתיחת שיחה:</span>
+            <div className="px-3.5 pb-2">
+              <span className="text-[10px] text-zinc-500 block mb-1">הצעות מהירות:</span>
               <div className="flex flex-wrap gap-1.5">
                 {QUICK_STARTERS.map((starter, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(starter.prompt)}
-                    className="text-[11px] px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-amber-400/20 text-zinc-300 hover:text-amber-300 border border-white/10 hover:border-amber-400/40 transition-all text-right"
+                    className="text-[10px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-amber-400/20 text-zinc-300 hover:text-amber-300 border border-white/10 hover:border-amber-400/40 transition-all text-right"
                   >
                     {starter.label}
                   </button>
@@ -233,7 +234,7 @@ export const StudioAiConcierge: React.FC = () => {
           )}
 
           {/* Input Footer */}
-          <div className="p-3 bg-[#181820] border-t border-white/10">
+          <div className="p-2.5 bg-[#181820] border-t border-white/10">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -246,15 +247,15 @@ export const StudioAiConcierge: React.FC = () => {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="כתבו רעיון לסרטון..."
-                className="flex-1 bg-[#0e0e12] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="flex-1 bg-[#0e0e12] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 transition-colors"
               />
 
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="p-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold disabled:opacity-40 transition-all"
+                className="p-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold disabled:opacity-40 transition-all"
               >
-                <Send className="w-4 h-4 rotate-180" />
+                <Send className="w-3.5 h-3.5 rotate-180" />
               </button>
             </form>
           </div>
