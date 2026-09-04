@@ -91,7 +91,7 @@ export const HomePage: React.FC = () => {
                 onClick={scrollToWork}
                 className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm sm:text-base shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all hover:scale-105"
               >
-                <span>צפו ב-18 הסרטים</span>
+                <span>צפו בעבודות</span>
                 <ArrowDown className="w-4 h-4" />
               </button>
 
@@ -138,7 +138,7 @@ export const HomePage: React.FC = () => {
             to="/work"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#121216] hover:bg-amber-500/10 text-white hover:text-amber-300 border border-white/10 hover:border-amber-500/40 text-xs sm:text-sm font-hebrew font-bold tracking-wide transition-all"
           >
-            <span>לצפייה בכל 18 הסרטים</span>
+            <span>לצפייה בכל העבודות</span>
             <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
