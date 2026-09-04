@@ -1,24 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowUpRight, MessageCircle } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Play, X, Clock } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
 import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
+import type { Project } from '../types/project';
 
 export const HomePage: React.FC = () => {
   const { projects } = useProjects();
-  const [heroVideoReady, setHeroVideoReady] = useState(false);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const [featuredModalOpen, setFeaturedModalOpen] = useState(false);
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
-
-  useEffect(() => {
-    if (heroVideoRef.current) {
-      heroVideoRef.current.play().catch(() => {
-        // Autoplay fallback
-      });
-    }
-  }, []);
+  // Top featured premiere film
+  const featuredProject = publishedProjects[0] || null;
 
   const scrollToWork = () => {
     const el = document.getElementById('film-gallery');
@@ -29,66 +23,159 @@ export const HomePage: React.FC = () => {
 
   return (
     <StudioLayout>
-      {/* 1. CLEAN CINEMATIC HERO (Muted Background Video, No Clutter) */}
-      <section className="relative min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center px-5 sm:px-8 md:px-12 py-16 overflow-hidden text-right font-hebrew">
-        {/* Silent Atmospheric Ambient Video */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/thumbnails/cbc-power-train.jpg"
-            alt="AmitAI Film Studio"
-            className="w-full h-full object-cover brightness-[0.35]"
-            loading="eager"
-            onError={(e) => {
-              e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=2000&q=85';
-            }}
-          />
-
-          <video
-            ref={heroVideoRef}
-            src="/videos/cbc-power-train.mp4"
-            muted
-            loop
-            playsInline
-            autoPlay
-            onLoadedData={() => setHeroVideoReady(true)}
-            className={`absolute inset-0 w-full h-full object-cover brightness-[0.35] transition-opacity duration-1000 ${
-              heroVideoReady ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-[#09090b]/60" />
+      {/* 1. CINEMA SHOWCASE HERO */}
+      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-between px-4 sm:px-6 md:px-12 pt-8 pb-12 overflow-hidden text-right font-hebrew">
+        {/* Subtle Ambient Background Gradient */}
+        <div className="absolute inset-0 z-0 bg-[#09090b]">
+          <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-4xl mx-auto w-full">
-          <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-3">
-            סטודיו הפקה ובימוי סרטי AI
-          </span>
+        {/* Top Tag */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full mb-6">
+          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-widest text-amber-400 uppercase">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span>AmitAI · סטודיו להפקת סרטי AI ופרסומות</span>
+          </div>
+        </div>
 
-          <h1 className="text-3xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-white font-syne leading-tight mb-4">
-            לא מייצרים סרטונים. <br />
-            <span className="text-amber-400">בונים עולמות קולנועיים.</span>
-          </h1>
+        {/* Central Split Grid: Left = Video Premiere Card, Right = Big Cinematic Headline */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto">
+          {/* Right Column: High-Impact Typography (7 Cols) */}
+          <div className="lg:col-span-7">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white font-syne leading-[1.1] mb-4">
+              לא מייצרים סרטונים. <br />
+              <span className="text-amber-400">בונים עולמות קולנועיים.</span>
+            </h1>
 
-          <p className="text-sm sm:text-lg text-zinc-300 font-light max-w-xl leading-relaxed mb-8">
-            אמיתי כהן (AmitAI) — יצירת סרטים, פרסומות ותוכן קולנועי מבוסס AI ברמה הגבוהה ביותר.
-          </p>
+            <p className="text-base sm:text-lg text-zinc-300 font-light max-w-xl leading-relaxed mb-8">
+              סטודיו הבימוי והקריאייטיב של <strong>אמיתי כהן (AmitAI)</strong> — יצירת סרטים, פרסומות וקמפיינים מבוססי Generative AI ברמה קולנועית 4K.
+            </p>
 
-          {/* Single Clean CTA Button */}
-          <div>
-            <button
-              onClick={scrollToWork}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm shadow-[0_0_25px_rgba(212,175,55,0.35)] transition-all hover:scale-105"
-            >
-              <span>צפו בגלריית הסרטים</span>
-              <ArrowDown className="w-4 h-4" />
-            </button>
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={scrollToWork}
+                className="flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm shadow-[0_0_25px_rgba(212,175,55,0.35)] transition-all hover:scale-105"
+              >
+                <span>צפו ב-18 הסרטים</span>
+                <ArrowDown className="w-4 h-4" />
+              </button>
+
+              <Link
+                to="/contact"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 text-xs font-bold transition-all"
+              >
+                <span>שיחת ייעוץ והצעת מחיר</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Left Column: Featured Film Showcase Card (5 Cols) */}
+          {featuredProject && (
+            <div className="lg:col-span-5">
+              <div
+                onClick={() => setFeaturedModalOpen(true)}
+                className="group relative rounded-2xl overflow-hidden bg-[#121216] border border-amber-500/30 hover:border-amber-400 transition-all duration-500 shadow-[0_10px_35px_rgba(0,0,0,0.8)] cursor-pointer"
+              >
+                {/* Poster Frame */}
+                <div className="relative aspect-video w-full overflow-hidden bg-black">
+                  <img
+                    src={featuredProject.video.posterUrl || '/thumbnails/cbc-power-train.jpg'}
+                    alt={featuredProject.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+
+                  {/* Big Play Button */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full bg-amber-400 text-black flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.7)] group-hover:scale-110 transition-transform">
+                      <Play className="w-6 h-6 fill-current ml-0.5" />
+                    </div>
+                  </div>
+
+                  {/* Premiere Badge */}
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-amber-500/90 text-black text-[11px] font-bold uppercase tracking-wider">
+                    הקרנת בכורה
+                  </div>
+
+                  {featuredProject.video.duration && (
+                    <div className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-black/80 text-[11px] font-mono text-amber-300 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      <span>{featuredProject.video.duration}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="p-4 bg-[#14141a]">
+                  <span className="text-[11px] font-mono text-amber-400 block mb-1">
+                    {featuredProject.client}
+                  </span>
+                  <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors">
+                    {featuredProject.title}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clients & Social Proof Bar */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full pt-10 border-t border-white/10 mt-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+            <span className="font-mono text-amber-400/80">הפקות וקמפיינים מובילים:</span>
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 font-medium text-zinc-300">
+              <span>CBC ישראל</span>
+              <span className="text-white/20">•</span>
+              <span>משרד המשפטים</span>
+              <span className="text-white/20">•</span>
+              <span>רכבת ישראל</span>
+              <span className="text-white/20">•</span>
+              <span>WIN CAMP</span>
+              <span className="text-white/20">•</span>
+              <span>אורט אדיבי</span>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Featured Video Modal */}
+      {featuredModalOpen && featuredProject && (
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8 animate-fade-in">
+          <button
+            onClick={() => setFeaturedModalOpen(false)}
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 z-50 p-3 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div className="w-full max-w-5xl bg-[#121216] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative aspect-video w-full bg-black">
+              <video
+                src={featuredProject.video.masterUrl}
+                controls
+                autoPlay
+                playsInline
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="p-4 sm:p-6 text-right font-hebrew">
+              <span className="text-xs font-mono text-amber-400 block mb-1">
+                {featuredProject.client}
+              </span>
+              <h3 className="text-lg font-bold text-white">
+                {featuredProject.title}
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 2. DIRECT VIDEO GALLERY */}
-      <section id="film-gallery" className="py-12 sm:py-20 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
+      <section id="film-gallery" className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
         <VideoGalleryGrid
           projects={publishedProjects}
           title="גלריית הסרטים וההפקות"
@@ -165,7 +252,6 @@ export const HomePage: React.FC = () => {
               rel="noopener noreferrer"
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm shadow-lg transition-all"
             >
-              <MessageCircle className="w-4 h-4 fill-current" />
               <span>WhatsApp: 052-6016115</span>
             </a>
 
