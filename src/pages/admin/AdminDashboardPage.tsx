@@ -232,18 +232,18 @@ export const AdminDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans pb-24 film-grain">
       {/* Top Header */}
-      <header className="bg-[#121216] border-b border-white/10 px-6 md:px-12 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-syne font-bold text-white text-lg uppercase tracking-wider">
-              AmitAI · ניהול ועריכת סרטונים
+      <header className="bg-[#121216] border-b border-white/10 px-4 sm:px-6 md:px-12 py-3.5">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="font-syne font-bold text-white text-sm sm:text-lg uppercase tracking-wider">
+              AmitAI · ניהול
             </span>
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-zinc-400 font-mono hidden md:inline">
               ({user?.email})
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => {
                 if (window.confirm('האם לרענן ולסנכרן את כל הסרטונים והשמות המקוריים?')) {
@@ -252,18 +252,18 @@ export const AdminDashboardPage: React.FC = () => {
                   setTimeout(() => setSuccessMessage(''), 3000);
                 }
               }}
-              className="flex items-center gap-1.5 text-xs font-mono uppercase text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-3.5 py-2 rounded-lg border border-amber-500/30 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-mono uppercase text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 sm:px-3.5 py-2 rounded-lg border border-amber-500/30 transition-colors"
               title="סנכרן מחדש את כל הסרטונים"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">סנכרון מלא</span>
+              <span className="hidden sm:inline">סנכרון</span>
             </button>
 
             <Link
               to="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-mono uppercase text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-lg border border-white/10 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-mono uppercase text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 sm:px-3.5 py-2 rounded-lg border border-white/10 transition-colors"
             >
               <span>לאתר</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -274,7 +274,7 @@ export const AdminDashboardPage: React.FC = () => {
                 logout();
                 navigate('/admin');
               }}
-              className="flex items-center gap-1.5 text-xs font-mono text-red-400 hover:text-red-300 bg-red-500/10 px-3.5 py-2 rounded-lg border border-red-500/20 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-mono text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 sm:px-3.5 py-2 rounded-lg border border-red-500/20 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>יציאה</span>
@@ -284,15 +284,15 @@ export const AdminDashboardPage: React.FC = () => {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-4xl mx-auto px-6 pt-10 space-y-10">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-8 sm:space-y-10">
         {/* ULTRA SIMPLE UPLOAD BOX */}
-        <div className="bg-[#121216] border-2 border-amber-500/40 rounded-2xl p-6 md:p-8 shadow-2xl text-right relative overflow-hidden">
+        <div className="bg-[#121216] border-2 border-amber-500/40 rounded-2xl p-5 sm:p-8 shadow-2xl text-right relative overflow-hidden">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-            <div className="w-10 h-10 rounded-xl bg-amber-400 text-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-400 text-black flex items-center justify-center shrink-0">
               <Upload className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-syne text-xl font-bold uppercase text-white">
+              <h2 className="font-syne text-lg sm:text-xl font-bold uppercase text-white">
                 העלאת סרטון חדש לאתר
               </h2>
               <p className="text-xs text-zinc-400 font-hebrew">
@@ -320,7 +320,7 @@ export const AdminDashboardPage: React.FC = () => {
                 value={videoTitle}
                 onChange={(e) => setVideoTitle(e.target.value)}
                 placeholder="למשל: אגף הסייבר של משרד המשפטים"
-                className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-amber-400 transition-colors"
               />
             </div>
 
@@ -335,7 +335,7 @@ export const AdminDashboardPage: React.FC = () => {
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="הדבק כאן את הקישור מכל פלטפורמה (למשל: https://vimeo.com/... או /videos/...)"
-                className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white font-mono focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full bg-[#09090b] border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-amber-400 transition-colors"
               />
             </div>
 
@@ -343,7 +343,7 @@ export const AdminDashboardPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading || !videoTitle.trim() || !videoUrl.trim()}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase tracking-wider text-base transition-all shadow-[0_0_25px_rgba(212,175,55,0.3)] disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.01]"
+              className="w-full flex items-center justify-center gap-3 py-3.5 sm:py-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-syne font-bold uppercase tracking-wider text-sm sm:text-base transition-all shadow-[0_0_25px_rgba(212,175,55,0.3)] disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.01]"
             >
               <Upload className="w-5 h-5" />
               <span>{loading ? 'מעלה לאתר...' : 'העלה סרטון לאתר עכשיו'}</span>
@@ -353,13 +353,13 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* LIST OF CURRENT VIDEOS WITH DRAG & DROP AND REORDER */}
         <div className="space-y-4 text-right">
-          <div className="flex items-center justify-between pb-3 border-b border-white/10">
-            <span className="text-xs font-mono text-zinc-500">
-              💡 טיפ: ניתן להשתמש בחצים ⬆️/⬇️ או לגרור סרטונים לשינוי הסדר
-            </span>
-            <h3 className="font-syne text-lg font-bold uppercase text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
+            <h3 className="font-syne text-base sm:text-lg font-bold uppercase text-white">
               הסרטונים המוצגים באתר ({projects.length})
             </h3>
+            <span className="text-[11px] font-mono text-zinc-500">
+              💡 טיפ: ניתן להשתמש בחצים ⬆️/⬇️ או לגרור סרטונים לשינוי הסדר
+            </span>
           </div>
 
           <div className="space-y-3">
