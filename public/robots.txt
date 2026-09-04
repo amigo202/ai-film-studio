@@ -1,0 +1,7 @@
+# Robots.txt for AmitAI Film Studio
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+
+Sitemap: https://studio-xi-lovat-16.vercel.app/sitemap.xml
