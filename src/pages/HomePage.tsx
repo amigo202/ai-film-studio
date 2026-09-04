@@ -4,7 +4,6 @@ import { ArrowDown, ArrowUpRight, Play, X, Clock } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
 import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
-import type { Project } from '../types/project';
 
 export const HomePage: React.FC = () => {
   const { projects } = useProjects();
