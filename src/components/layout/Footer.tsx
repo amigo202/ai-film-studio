@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
               <span className="p-2 rounded-lg bg-white/[0.02] border border-white/5">בימוי והפקת סרטי AI</span>
               <span className="p-2 rounded-lg bg-white/[0.02] border border-white/5">עקביות דמויות ושחקנים (LoRA)</span>
               <span className="p-2 rounded-lg bg-white/[0.02] border border-white/5">פרסומות וקמפיינים מותגיים</span>
-              <span className="p-2 rounded-lg bg-white/[0.02] border border-white/5">עריכה וסאונד קולנועי 4K</span>
+              <span className="p-2 rounded-lg bg-white/[0.02] border border-white/5">עריכה ועיצוב סאונד קולנועי</span>
             </div>
           </div>
         </div>

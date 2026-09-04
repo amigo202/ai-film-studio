@@ -61,7 +61,7 @@ export const AboutPage: React.FC = () => {
 
             <div className="p-6 rounded-2xl bg-[#121216] border border-white/10">
               <span className="text-2xl font-bold text-white mb-2">03</span>
-              <h3 className="text-lg font-bold text-white mb-2">איכות שידור 4K ללא פשרות</h3>
+              <h3 className="text-lg font-bold text-white mb-2">איכות שידור וסאונד ללא פשרות</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
                 אימון עקביות דמויות (LoRA), עריכה קצבית ועיצוב סאונד מותאם ברמה הגבוהה ביותר.
               </p>

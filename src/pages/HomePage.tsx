@@ -181,8 +181,8 @@ export const HomePage: React.FC = () => {
 
             <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
               <span className="font-mono text-amber-400 text-xs font-bold block mb-1">03</span>
-              <h3 className="font-bold text-white text-sm mb-1">איכות שידור 4K וסאונד</h3>
-              <p className="text-xs text-zinc-400">עריכה מקצועית, עיצוב סאונד קולנועי ומאסטרינג.</p>
+              <h3 className="font-bold text-white text-sm mb-1">איכות שידור וסאונד קולנועי</h3>
+              <p className="text-xs text-zinc-400">עריכה מקצועית, עיצוב סאונד מותאם ומאסטרינג.</p>
             </div>
           </div>
         </div>
