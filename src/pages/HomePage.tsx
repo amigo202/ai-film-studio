@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowUpRight, Sparkles, MessageCircle } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, MessageCircle } from 'lucide-react';
 import { useProjects } from '../context/ProjectContext';
 import { VideoGalleryGrid } from '../components/video/VideoGalleryGrid';
 import { StudioLayout } from '../components/layout/StudioLayout';
-import { PriceCalculatorModal } from '../components/calculator/PriceCalculatorModal';
 
 export const HomePage: React.FC = () => {
   const { projects } = useProjects();
   const [heroVideoReady, setHeroVideoReady] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [calculatorOpen, setCalculatorOpen] = useState(false);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
@@ -24,26 +20,6 @@ export const HomePage: React.FC = () => {
     }
   }, []);
 
-  const toggleSound = () => {
-    if (heroVideoRef.current) {
-      const nextMuted = !isMuted;
-      heroVideoRef.current.muted = nextMuted;
-      setIsMuted(nextMuted);
-    }
-  };
-
-  const togglePlayPause = () => {
-    if (heroVideoRef.current) {
-      if (isPlaying) {
-        heroVideoRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        heroVideoRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
-
   const scrollToWork = () => {
     const el = document.getElementById('film-gallery');
     if (el) {
@@ -53,14 +29,14 @@ export const HomePage: React.FC = () => {
 
   return (
     <StudioLayout>
-      {/* 1. CINEMATIC HERO */}
-      <section className="relative min-h-[85vh] sm:min-h-[92vh] flex flex-col justify-between px-4 sm:px-6 md:px-12 pt-6 pb-12 sm:pb-16 overflow-hidden">
-        {/* Background Visual */}
+      {/* 1. CLEAN CINEMATIC HERO (Muted Background Video, No Clutter) */}
+      <section className="relative min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center px-5 sm:px-8 md:px-12 py-16 overflow-hidden text-right font-hebrew">
+        {/* Silent Atmospheric Ambient Video */}
         <div className="absolute inset-0 z-0">
           <img
             src="/thumbnails/cbc-power-train.jpg"
-            alt="AmitAI Film Studio Showreel Hero"
-            className="w-full h-full object-cover brightness-40"
+            alt="AmitAI Film Studio"
+            className="w-full h-full object-cover brightness-[0.35]"
             loading="eager"
             onError={(e) => {
               e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=2000&q=85';
@@ -70,223 +46,139 @@ export const HomePage: React.FC = () => {
           <video
             ref={heroVideoRef}
             src="/videos/cbc-power-train.mp4"
-            muted={isMuted}
+            muted
             loop
             playsInline
+            autoPlay
             onLoadedData={() => setHeroVideoReady(true)}
-            className={`absolute inset-0 w-full h-full object-cover brightness-40 transition-opacity duration-1000 ${
+            className={`absolute inset-0 w-full h-full object-cover brightness-[0.35] transition-opacity duration-1000 ${
               heroVideoReady ? 'opacity-100' : 'opacity-0'
             }`}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-[#09090b]/70" />
-          <div className="absolute inset-0 bg-radial-gradient from-transparent to-[#09090b]/80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-[#09090b]/60" />
         </div>
 
-        {/* Top Floating Showreel Controls */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-12 z-20 flex items-center gap-2">
-          <button
-            onClick={togglePlayPause}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-black/70 hover:bg-black/90 border border-white/15 hover:border-amber-400/50 text-white text-xs backdrop-blur-md transition-all shadow-lg"
-            title={isPlaying ? 'השהה סרטון' : 'נגן סרטון'}
-          >
-            {isPlaying ? (
-              <span className="flex items-center gap-0.5">
-                <span className="w-1 h-3 bg-white rounded-xs" />
-                <span className="w-1 h-3 bg-white rounded-xs" />
-              </span>
-            ) : (
-              <span className="w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-6 border-l-amber-400 ml-0.5" />
-            )}
-          </button>
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-4xl mx-auto w-full">
+          <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-3">
+            סטודיו הפקה ובימוי סרטי AI
+          </span>
 
-          <button
-            onClick={toggleSound}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 border border-white/15 hover:border-amber-400/50 text-white text-xs font-mono uppercase tracking-wider backdrop-blur-md transition-all shadow-lg group"
-            title={isMuted ? 'הפעל סאונד' : 'השתק סאונד'}
-          >
-            {isMuted ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-zinc-500" />
-                <span className="text-[11px]">סאונד</span>
-              </>
-            ) : (
-              <>
-                <span className="flex items-center gap-0.5 h-3">
-                  <span className="w-0.5 h-full bg-amber-400 animate-pulse" />
-                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse delay-75" />
-                  <span className="w-0.5 h-3 bg-amber-400 animate-pulse delay-150" />
-                </span>
-                <span className="text-amber-400 font-bold text-[11px]">פועל</span>
-              </>
-            )}
-          </button>
-        </div>
+          <h1 className="text-3xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-white font-syne leading-tight mb-4">
+            לא מייצרים סרטונים. <br />
+            <span className="text-amber-400">בונים עולמות קולנועיים.</span>
+          </h1>
 
-        {/* Top Studio Micro-Tag */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full pt-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-300 text-[11px] font-hebrew tracking-wide">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span>AmitAI · אמיתי כהן · בימוי והפקת סרטי AI</span>
-          </div>
-        </div>
+          <p className="text-sm sm:text-lg text-zinc-300 font-light max-w-xl leading-relaxed mb-8">
+            אמיתי כהן (AmitAI) — יצירת סרטים, פרסומות ותוכן קולנועי מבוסס AI ברמה הגבוהה ביותר.
+          </p>
 
-        {/* Hero Central Headline */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full py-8 sm:py-12">
-          <div className="max-w-4xl">
-            <h1 className="text-3xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-white font-syne leading-[1.08] mb-4 sm:mb-6">
-              לא מייצרים <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-l from-white via-zinc-200 to-zinc-500">
-                סרטוני AI.
-              </span>
-              <br />
-              <span className="text-amber-400">בונים עולמות.</span>
-            </h1>
-
-            <p className="text-sm sm:text-xl md:text-2xl text-zinc-300 font-light max-w-2xl font-hebrew leading-relaxed mb-6 sm:mb-8">
-              סטודיו הפקה ובימוי של אמיתי כהן (AmitAI) — שילוב של קריאייטיב עמוק, סטוריטלינג וטכנולוגיות Generative Cinema ליצירת סרטים ופרסומות באיכות קולנועית.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 font-hebrew max-w-md sm:max-w-none">
-              <button
-                onClick={scrollToWork}
-                className="group flex items-center justify-center gap-2.5 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold tracking-wider text-xs sm:text-sm transition-all shadow-[0_0_25px_rgba(212,175,55,0.3)] hover:scale-105"
-              >
-                <span>צפו בגלריית הסרטים</span>
-                <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
-              </button>
-
-              <button
-                onClick={() => setCalculatorOpen(true)}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 sm:py-4 rounded-full bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/40 font-bold tracking-wider text-xs sm:text-sm backdrop-blur-md transition-all shadow-md"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>חבילות הפקה ומחירים</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Hero Info Bar */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 border-t border-white/10 pt-4 text-xs font-hebrew text-zinc-400">
+          {/* Single Clean CTA Button */}
           <div>
-            <span>במאי ומפיק קולנוע AI · ישראל והעולם</span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span>{publishedProjects.length} סרטים והפקות</span>
+            <button
+              onClick={scrollToWork}
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm shadow-[0_0_25px_rgba(212,175,55,0.35)] transition-all hover:scale-105"
+            >
+              <span>צפו בגלריית הסרטים</span>
+              <ArrowDown className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>
 
       {/* 2. DIRECT VIDEO GALLERY */}
-      <section id="film-gallery" className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
+      <section id="film-gallery" className="py-12 sm:py-20 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
         <VideoGalleryGrid
           projects={publishedProjects}
           title="גלריית הסרטים וההפקות"
           subtitle="צפייה ישירה ומיידית בכל הסרטים"
         />
 
-        <div className="pt-12 sm:pt-16 text-center">
+        <div className="pt-10 sm:pt-14 text-center">
           <Link
             to="/work"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#121216] hover:bg-amber-500/10 text-white hover:text-amber-300 border border-white/10 hover:border-amber-500/40 text-xs sm:text-sm font-hebrew font-bold tracking-wide transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#121216] hover:bg-amber-500/10 text-white hover:text-amber-300 border border-white/10 hover:border-amber-500/40 text-xs sm:text-sm font-hebrew font-bold tracking-wide transition-all"
           >
-            <span>לצפייה בכל הסרטים והעבודות</span>
+            <span>לצפייה בכל 18 הסרטים</span>
             <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
-      {/* 3. STUDIO MANIFESTO & PHILOSOPHY */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 md:px-12 bg-[#060608] border-y border-white/10 relative overflow-hidden font-hebrew">
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-4 sm:mb-6">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>מניפסט הסטודיו</span>
-          </div>
+      {/* 3. STUDIO MANIFESTO (Clean & Short) */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[#060608] border-y border-white/10 text-right font-hebrew">
+        <div className="max-w-4xl mx-auto">
+          <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
+            מניפסט הסטודיו
+          </span>
 
-          <blockquote className="text-xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-6 sm:mb-8 font-hebrew">
-            "ה-AI שינתה את הכלים. <br />
-            <span className="text-amber-400">היא לא שינתה את הצורך</span> ברעיון מעולה ובבימוי חכם."
-          </blockquote>
+          <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight leading-tight mb-4">
+            ה-AI שינתה את הכלים. <br />
+            <span className="text-amber-400">היא לא שינתה את הצורך ברעיון מעולה ובבימוי חכם.</span>
+          </h2>
 
-          <p className="text-sm sm:text-lg md:text-xl text-zinc-400 font-light font-hebrew max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
-            הטכנולוגיה מאפשרת לנו להפיק סצנות מורכבות ללא צילומי שטח ממושכים — אבל הלב של כל סרט נשאר בימוי מדויק, כתיבה חכמה וראייה קולנועית חסרת פשרות.
+          <p className="text-sm sm:text-base text-zinc-400 font-light leading-relaxed mb-8 max-w-2xl">
+            הטכנולוגיה מאפשרת להפיק סצנות מורכבות ללא ימי צילום ארוכים — אבל הלב של כל סרט נשאר בימוי מדויק, כתיבה חכמה ושפה חזותית אחידה.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-right font-hebrew">
-            <div className="p-5 sm:p-6 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="font-mono text-amber-400 text-sm font-bold block mb-1.5">01</span>
-              <h4 className="font-bold text-white text-sm sm:text-base mb-1">תסריט וקריאייטיב</h4>
-              <p className="text-xs text-zinc-400 leading-relaxed">פיתוח קונספטים מקוריים המותאמים למותג או לנרטיב.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="font-mono text-amber-400 text-xs font-bold block mb-1">01</span>
+              <h3 className="font-bold text-white text-sm mb-1">תסריט ובימוי מלא</h3>
+              <p className="text-xs text-zinc-400">פיתוח קונספט, כתיבה ושפה ויזואלית מותאמת.</p>
             </div>
 
-            <div className="p-5 sm:p-6 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="font-mono text-amber-400 text-sm font-bold block mb-1.5">02</span>
-              <h4 className="font-bold text-white text-sm sm:text-base mb-1">בימוי ועקביות דמויות</h4>
-              <p className="text-xs text-zinc-400 leading-relaxed">שליטה מלאה בדמויות, תאורה ושפה חזותית אחידה (LoRA).</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="font-mono text-amber-400 text-xs font-bold block mb-1">02</span>
+              <h3 className="font-bold text-white text-sm mb-1">עקביות דמויות ושחקנים</h3>
+              <p className="text-xs text-zinc-400">שליטה מלאה בדמויות ותאורה לאורך כל הסרט (LoRA).</p>
             </div>
 
-            <div className="p-5 sm:p-6 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="font-mono text-amber-400 text-sm font-bold block mb-1.5">03</span>
-              <h4 className="font-bold text-white text-sm sm:text-base mb-1">תנועה ואנימציה קולנועית</h4>
-              <p className="text-xs text-zinc-400 leading-relaxed">שליטה מתקדמת בתנועות מצלמה, זרימת חומרים וסנכרון.</p>
-            </div>
-
-            <div className="p-5 sm:p-6 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="font-mono text-amber-400 text-sm font-bold block mb-1.5">04</span>
-              <h4 className="font-bold text-white text-sm sm:text-base mb-1">עריכה, סאונד ומאסטרינג</h4>
-              <p className="text-xs text-zinc-400 leading-relaxed">עריכה מקצועית ב-DaVinci, עיצוב סאונד מותאם ורינדור 4K סופי.</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="font-mono text-amber-400 text-xs font-bold block mb-1">03</span>
+              <h3 className="font-bold text-white text-sm mb-1">איכות שידור 4K וסאונד</h3>
+              <p className="text-xs text-zinc-400">עריכה מקצועית, עיצוב סאונד קולנועי ומאסטרינג.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 4. FAST CONTACT CTA BANNER */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 max-w-4xl mx-auto text-center font-hebrew">
-        <div className="p-8 sm:p-16 rounded-3xl bg-gradient-to-b from-[#121216] to-[#09090b] border border-white/10 relative overflow-hidden shadow-2xl">
-          <div className="relative z-10 max-w-xl mx-auto">
-            <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
-              בואו נדבר
-            </span>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-3 sm:mb-4 leading-tight">
-              יש לכם רעיון לסרט? <br />
-              <span className="text-amber-400">בואו נבנה אותו.</span>
-            </h2>
-            <p className="text-xs sm:text-base text-zinc-400 font-hebrew mb-8 leading-relaxed">
-              פרסומת למותג, סרט קונספט, קמפיין דיגיטלי או פרויקט עלילתי שלם — אנחנו כאן כדי להפוך את החזון להפקה קולנועית.
-            </p>
+      <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-12 max-w-3xl mx-auto text-center font-hebrew">
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-[#121216] to-[#09090b] border border-white/10 shadow-2xl">
+          <span className="text-xs font-mono uppercase tracking-widest text-amber-400 block mb-2">
+            בואו נדבר
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3 leading-tight">
+            יש לכם רעיון לסרט? <br />
+            <span className="text-amber-400">בואו נבנה אותו.</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-zinc-400 mb-6 leading-relaxed">
+            פרסומת למותג, סרט קונספט או סרטון תדמית — מוזמנים ליצור קשר ישיר לשיחת ייעוץ.
+          </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto">
-              <a
-                href="https://wa.me/972526016115?text=היי%20אמיתי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-105 transition-all"
-              >
-                <MessageCircle className="w-4 h-4 fill-current" />
-                <span>WhatsApp: 052-6016115</span>
-              </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="https://wa.me/972526016115?text=היי%20אמיתי,%20יש%20לי%20רעיון%20לפרויקט%20סרט%20AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm shadow-lg transition-all"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>WhatsApp: 052-6016115</span>
+            </a>
 
-              <Link
-                to="/contact"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 text-xs font-bold transition-all"
-              >
-                <span>השארת פרטים</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+            <Link
+              to="/contact"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/15 text-xs font-bold transition-all"
+            >
+              <span>השארת פרטים</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
-
-      {/* Global Calculator Modal */}
-      <PriceCalculatorModal
-        isOpen={calculatorOpen}
-        onClose={() => setCalculatorOpen(false)}
-      />
     </StudioLayout>
   );
 };
