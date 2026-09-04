@@ -113,13 +113,19 @@ export const HomePage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-3 sm:gap-6 font-medium text-zinc-300">
               <span>CBC ישראל</span>
               <span className="text-white/20">•</span>
+              <span>משרד החינוך</span>
+              <span className="text-white/20">•</span>
+              <span>רשת אורט</span>
+              <span className="text-white/20">•</span>
+              <span>מתודיקה</span>
+              <span className="text-white/20">•</span>
               <span>משרד המשפטים</span>
               <span className="text-white/20">•</span>
               <span>רכבת ישראל</span>
               <span className="text-white/20">•</span>
               <span>WIN CAMP</span>
               <span className="text-white/20">•</span>
-              <span>אורט אדיבי</span>
+              <span>טרה</span>
             </div>
           </div>
         </div>
